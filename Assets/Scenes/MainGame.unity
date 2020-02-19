@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edf6f3eac3e9a4bd8b616f4dedd33774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 368187413}
   gameOverPanel: {fileID: 966306487}
 --- !u!4 &309345037
 Transform:
@@ -261,11 +262,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82d70ef57f4ee415cb20ff8f04c93a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraRig: {fileID: 864700212}
   playerPrefab: {fileID: 387052258234922331, guid: 81334230ff1d141578743b61d4025d15,
     type: 3}
-  droneManager: {fileID: 1124517529}
-  uiManager: {fileID: 309345036}
   gameStartSound: {fileID: 8300000, guid: e7728dcea3dfb43828c7e9600fc44b6f, type: 3}
   gameOverSound: {fileID: 8300000, guid: 4574879063e0d462bad41e7482e1909d, type: 3}
 --- !u!4 &368187414
@@ -777,6 +775,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   target: {fileID: 0}
+  gameManager: {fileID: 368187413}
 --- !u!4 &864700213
 Transform:
   m_ObjectHideFlags: 0
@@ -996,14 +995,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04ae0d0cbf3d64dffa8a82bc77aa7b22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Bounds: {fileID: 1749389352}
-  dronePrefab: {fileID: 5725811411546682214, guid: 6ca9fddd0c236472da7c4d13c146aea2,
+  gameManager: {fileID: 368187413}
+  spritePrefab: {fileID: 5725811411546682214, guid: 6ca9fddd0c236472da7c4d13c146aea2,
     type: 3}
   spawnAmt: 15
   spawnDelay: 3
-  player: {fileID: 0}
   spawnSound: {fileID: 8300000, guid: 3de9884603c50417697d8d92e17eddde, type: 3}
-  shouldSpawnDrones: 0
+  _shouldSpawn: 1
+  Bounds: {fileID: 1749389352}
 --- !u!4 &1124517530
 Transform:
   m_ObjectHideFlags: 0
@@ -1157,13 +1156,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e90d5fd14c6604eda8a65861b7a56685, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Bounds: {fileID: 1749389352}
-  gatePrefab: {fileID: 4245910139787302849, guid: cc53953723f0e44a0b82b38dfbbc572f,
+  gameManager: {fileID: 368187413}
+  spritePrefab: {fileID: 4245910139787302849, guid: cc53953723f0e44a0b82b38dfbbc572f,
     type: 3}
   spawnAmt: 1
   spawnDelay: 2.5
   spawnSound: {fileID: 0}
-  shouldSpawnGates: 1
+  _shouldSpawn: 1
+  Bounds: {fileID: 1749389352}
 --- !u!1 &1732533683
 GameObject:
   m_ObjectHideFlags: 0

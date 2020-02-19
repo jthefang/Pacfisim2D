@@ -5,13 +5,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public event Action<Player> onPlayerDeath;
     public GameManager gameManager;
+    public AudioClip hitSound;
+
+    private AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        audioSource = gameObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -22,28 +24,33 @@ public class Player : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (gameManager.GetGameState() == GameManager.GameState.PLAYING) {
-            if (other.gameObject.tag.Contains("Gate End")) {
-                CollidedWithGate(other.gameObject.GetComponent<Gate>());
-                return;
-            }     
-            Drone drone = other.gameObject.GetComponent<Drone>();
-            if (drone) {
-                CollidedWithDrone(drone);
-            } 
+        if (gameManager.IsPlaying) {
+            switch (other.gameObject.tag) {
+                case "Gate End":
+                    CollidedWithGate(other.gameObject.GetComponent<Gate>());
+                    break;
+                case "Drone":
+                    CollidedWithDrone(other.gameObject.GetComponent<Drone>());
+                    break;
+                default:
+                    Debug.Log("Don't care about this collision");
+                    break;
+            }
         }
     }
 
     public void CollidedWithGate(Gate gate) {
-        if (onPlayerDeath != null) {
-            gate.Explode();
-            onPlayerDeath(this);
-        }
+        audioSource.PlayOneShot(hitSound);
+        gate.Explode();
+        Die();
     }
 
     public void CollidedWithDrone(Drone drone) {
-        if (onPlayerDeath != null) {
-            onPlayerDeath(this);
-        }
+        audioSource.PlayOneShot(hitSound);
+        Die();
+    }
+
+    public void Die() {
+        gameManager.IsGameOver = true;
     }
 }
