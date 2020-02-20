@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gate : MonoBehaviour
+public class Gate : MonoBehaviour, IPooledObject
 {
     public Vector2 rotateSpeedRange = new Vector2(30.0f, 50.0f);
     public Vector2 driftForceRange = new Vector2(5.0f, 10.0f);
@@ -17,10 +17,14 @@ public class Gate : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InitGate();
+        
     }
 
-    public void InitGate() {
+    public void OnObjectInitiate(SpriteManager sm) {
+        this.transform.SetParent(sm.transform);
+    }
+
+    public void OnObjectSpawn() {
         float sign = Random.Range(-0.5f, 0.5f);
         rotateSpeed = Mathf.Sign(sign) * Random.Range(rotateSpeedRange.x, rotateSpeedRange.y);
         initialDriftForce = Random.Range(driftForceRange.x, driftForceRange.y);
@@ -46,7 +50,8 @@ public class Gate : MonoBehaviour
 
     public void Explode() {
         explosion = Instantiate(explosionPrefab, this.transform.position, Quaternion.identity);
-        explosion.transform.localScale = new Vector2(blastRadius, blastRadius);
-        Destroy(this.gameObject);
+        CircleCollider2D circleCollider = explosion.gameObject.GetComponent<CircleCollider2D>();
+        circleCollider.radius = blastRadius;
+        gameObject.SetActive(false);
     }
 }

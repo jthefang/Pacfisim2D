@@ -5,7 +5,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public GameManager gameManager;
+    protected GameManager _gameManager;
+    public GameManager gameManager {
+        get {
+            return this._gameManager;
+        }
+        set {
+            this._gameManager = value;
+        }
+    }
     public AudioClip hitSound;
 
     private AudioSource audioSource;
@@ -27,25 +35,23 @@ public class Player : MonoBehaviour
         if (gameManager.IsPlaying) {
             switch (other.gameObject.tag) {
                 case "Gate End":
-                    CollidedWithGate(other.gameObject.GetComponent<Gate>());
+                    CollidedWithGateEnd(other.gameObject.GetComponent<Gate>());
                     break;
                 case "Drone":
                     CollidedWithDrone(other.gameObject.GetComponent<Drone>());
                     break;
                 default:
-                    Debug.Log("Don't care about this collision");
                     break;
             }
         }
     }
 
-    public void CollidedWithGate(Gate gate) {
+    void CollidedWithGateEnd(Gate gate) {
         audioSource.PlayOneShot(hitSound);
-        gate.Explode();
         Die();
     }
 
-    public void CollidedWithDrone(Drone drone) {
+    void CollidedWithDrone(Drone drone) {
         audioSource.PlayOneShot(hitSound);
         Die();
     }

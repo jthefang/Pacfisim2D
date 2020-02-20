@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {   
+    Player player;
     public float speed = 2.0f;
 
     private Rigidbody2D rigidbody2d;
@@ -12,15 +13,18 @@ public class PlayerControl : MonoBehaviour
     void Start()
     {
         rigidbody2d = gameObject.GetComponent<Rigidbody2D>();
+        player = GetComponent<Player>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        LookTowardMouse();
+        if (player.gameManager.IsPlaying) {
+            LookTowardMouse();
 
-        if (Input.GetKey(KeyCode.Space)) {
-            transform.position -= transform.right * Time.deltaTime * speed;
+            if (Input.GetKey(KeyCode.Space)) {
+                transform.position -= transform.right * Time.deltaTime * speed;
+            }
         }
     }
          

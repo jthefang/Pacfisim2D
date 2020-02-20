@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-public class CameraRig : MonoBehaviour
+public class CameraRig : MonoBehaviour, ILoadableScript
 {
     public float speed;
     public GameObject target;
@@ -11,13 +12,15 @@ public class CameraRig : MonoBehaviour
 
     [SerializeField]
     private GameManager gameManager;
+    public event Action<ILoadableScript> OnScriptInitialized;
 
     // Start is called before the first frame update
     void Start()
     {
         rigTransform = this.transform.parent;
         gameManager.OnNewPlayer += OnNewPlayer;
-        gameManager.NumResourcesLoaded += 1;
+
+        OnScriptInitialized?.Invoke(this);
     }
 
     // Update is called once per frame
@@ -31,4 +34,5 @@ public class CameraRig : MonoBehaviour
     void OnNewPlayer(Player player) {
         this.target = player.gameObject;
     }
+    
 }

@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-public class SpriteManager : MonoBehaviour, ISpriteManager
+public class SpriteManager : MonoBehaviour, ISpriteManager, ILoadableScript
 {
     [SerializeField]
     protected GameManager gameManager;
@@ -34,6 +35,12 @@ public class SpriteManager : MonoBehaviour, ISpriteManager
     protected GameObject Bounds;
     protected Vector3 bounds;
 
+    public Player player;
+
+    protected ObjectPooler objectPooler;
+
+    public event Action<ILoadableScript> OnScriptInitialized;
+
     // Start is called before the first frame update
     void Start() {
         InitSpriteManager();
@@ -41,14 +48,22 @@ public class SpriteManager : MonoBehaviour, ISpriteManager
 
     public virtual void InitSpriteManager()
     {
+        objectPooler = ObjectPooler.Instance;
         audioSource = gameObject.GetComponent<AudioSource>();
         bounds = Bounds.GetComponent<SpriteRenderer>().bounds.extents;
 
         sprites = new List<GameObject>();
+        InitSpawnLocations();
 
         gameManager.OnGameStart += OnGameStart;
         gameManager.OnGameOver += OnGameOver;
-        gameManager.NumResourcesLoaded += 1;
+        gameManager.OnNewPlayer += OnNewPlayer;
+
+        OnScriptInitialized?.Invoke(this);
+    }
+
+    public virtual void InitSpawnLocations() {
+        //pass
     }
 
     // Update is called once per frame
@@ -71,6 +86,9 @@ public class SpriteManager : MonoBehaviour, ISpriteManager
     public void OnGameOver(GameManager gm) {
         DestroyAll();
     }
+    void OnNewPlayer(Player player) {
+        this.player = player;
+    }
 
     public virtual void SpawnSprites() {
         //pass
@@ -82,13 +100,23 @@ public class SpriteManager : MonoBehaviour, ISpriteManager
 
     public void DestroyAll() {
         foreach (GameObject sprite in sprites) {
-            Destroy(sprite);
+            sprite.SetActive(false);
         }
         sprites = new List<GameObject>();
     }
 
     public void ResetSpawnTimer() {
         timeTilSpawn = spawnDelay;
+    }
+
+    public void OnBeforeSerialize()
+    {
+
+    }
+    
+    public void OnAfterDeserialize()
+    {
+
     }
 
 }

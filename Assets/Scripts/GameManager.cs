@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-//TODO: make sound manager to spawn GO to play sounds if needed (uses a pool of GO)
+/* 
+    Last script to load: 
+        waits on ObjectPooler, DroneManager, GateManager, UIManager, CameraRig
+*/
+
 public enum GameState {
     STOPPED, //e.g. for game over
     PAUSED,
@@ -11,7 +15,7 @@ public enum GameState {
     STARTING,
 }
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
 {
     private GameState _currGameState;
     public GameState CurrGameState
@@ -54,27 +58,7 @@ public class GameManager : MonoBehaviour
     private Player player;
     public event Action<Player> OnNewPlayer;
 
-    private int _numResourcesNeeded = 4; //GateManager, DroneManager, CameraRig, UIManager
-    private int _numResourcesLoaded;
-    public int NumResourcesLoaded {
-        get {
-            return this._numResourcesLoaded;
-        }
-        set {
-            if (!AllResourcesLoaded) {
-                this._numResourcesLoaded = value;
-                if (AllResourcesLoaded) {
-                    spawnPlayer();
-                    CurrGameState = GameState.STARTING;
-                }
-            }
-        }
-    }
-    public bool AllResourcesLoaded {
-        get {
-            return _numResourcesNeeded == _numResourcesLoaded;
-        }
-    }
+    public event Action<ILoadableScript> OnScriptInitialized;
 
     // Start is called before the first frame update
     void Start()
@@ -84,12 +68,20 @@ public class GameManager : MonoBehaviour
         OnGameStateChange += OnGameStateChangeHandler;
         OnGameStart += OnGameStartHandler;
         OnGameOver += OnGameOverHandler;
+
+        OnScriptInitialized?.Invoke(this);
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+
+    }
+
+    public void OnAllDependenciesLoaded() {
+        //Game doesen't start until this happens
+        spawnPlayer();
+        CurrGameState = GameState.STARTING;
     }
 
     void OnGameStateChangeHandler(GameState prevGameState, GameState newGameState) {

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Drone : MonoBehaviour
+public class Drone : MonoBehaviour, IPooledObject
 {
     public Transform targetTransform;
     public float speed = 8.0f;
+
+    SpriteManager spriteManager;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +22,15 @@ public class Drone : MonoBehaviour
         FollowPlayer();
     }
 
+    public void OnObjectInitiate(SpriteManager sm) {
+        spriteManager = sm;
+        this.transform.SetParent(sm.transform);
+    }
+
+    public void OnObjectSpawn()  {
+        this.targetTransform = spriteManager.player.gameObject.transform;
+    }
+
     void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.tag.Contains("Explosion")) {
             Die();
@@ -27,7 +38,7 @@ public class Drone : MonoBehaviour
     }
 
     void Die() {
-        Destroy(this.gameObject);
+        gameObject.SetActive(false);
     }
 
     void LookAtPlayer() {
