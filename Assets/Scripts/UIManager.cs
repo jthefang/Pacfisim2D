@@ -9,6 +9,10 @@ public class UIManager : MonoBehaviour, ILoadableScript
     private GameManager gameManager;
     public GameObject gameOverPanel;
     public event Action<ILoadableScript> OnScriptInitialized;
+    bool _isInitialized = false;
+    public bool IsInitialized () {
+        return this._isInitialized;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +21,7 @@ public class UIManager : MonoBehaviour, ILoadableScript
         gameManager.OnGameStart += OnGameStart;
         gameManager.OnGameOver += OnGameOver;
 
+        _isInitialized = true;
         OnScriptInitialized?.Invoke(this);
     }
 
@@ -31,21 +36,15 @@ public class UIManager : MonoBehaviour, ILoadableScript
     }
 
     void OnGameOver(GameManager gm) {
+        Invoke("ShowGameOverPanel", gameManager.GAME_OVER_DELAY);
+    }
+
+    void ShowGameOverPanel() {
         ToggleGameOverPanel(true);
     }
 
     public void ToggleGameOverPanel(bool shouldShow) {
         gameOverPanel.SetActive(shouldShow);
-    }
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-    
-    public void OnAfterDeserialize()
-    {
-
     }
 
 }

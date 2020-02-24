@@ -177,7 +177,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -192,12 +192,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 1.2823392, y: 0.068442345}
-      - {x: 1.2801095, y: 0.91551906}
-      - {x: 1.9058353, y: 0.50395715}
-    - - {x: -1.9251791, y: 0.50583124}
-      - {x: -1.2799354, y: 0.94177145}
-      - {x: -1.2725236, y: 0.066568226}
+    - - {x: 1.2945743, y: -0.4270718}
+      - {x: 1.2923446, y: 0.4200046}
+      - {x: 1.8997173, y: -0.016026974}
+    - - {x: -1.9435314, y: -0.008035183}
+      - {x: -1.2921703, y: 0.4523747}
+      - {x: -1.290876, y: -0.44118118}
 --- !u!212 &3627959193454938638
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -278,7 +278,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5090073398873646662}
   - component: {fileID: 4622264199121636405}
-  - component: {fileID: 3627959194203563207}
   m_Layer: 10
   m_Name: Right Gate End
   m_TagString: Gate End
@@ -351,34 +350,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!60 &3627959194203563207
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8322595524459410668}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.75, y: 1}
-    newSize: {x: 0.75, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -0.375, y: 0.5}
-      - {x: -0.375, y: -0.5}
-      - {x: 0.35721517, y: 0.004827082}
 --- !u!1 &8913878086625346384
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,7 +360,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1282462511239014728}
   - component: {fileID: 2562999651093877827}
-  - component: {fileID: 3627959193846157628}
   m_Layer: 10
   m_Name: Left Gate End
   m_TagString: Gate End
@@ -462,32 +432,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!60 &3627959193846157628
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8913878086625346384}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.75, y: 1}
-    newSize: {x: 0.75, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -0.35721517, y: -0.007029265}
-      - {x: 0.375, y: -0.5}
-      - {x: 0.375, y: 0}
-      - {x: 0.375, y: 0.5}

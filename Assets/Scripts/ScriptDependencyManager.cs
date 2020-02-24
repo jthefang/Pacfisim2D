@@ -7,20 +7,31 @@ using UnityEngine;
     Ensures we load all script dependencies in the right order
 
     DependentScripts = List of scripts that depend on other scripts to load first, before they can load
-        must be of type IDependentScript
+        must be of type `IDependentScript`
 
     ScriptDependencies = List of lists of scripts that the dependent scripts wait on to load
-        must be of type ILoadableScript
+        must be of type `ILoadableScript`
 
     Each IDependentScript in DependentScripts should have a corresponding list of ILoadableScript's in ScriptDepndencies 
 */
 public class ScriptDependencyManager : MonoBehaviour
 {
+    #region Singleton
+    public static ScriptDependencyManager Instance;
+    //reference this only version as ScriptDependencyManager.Instance
+
+    private void Awake() {
+        Instance = this;
+    }
+    #endregion
+
     [SerializeField]
     List<MonoBehaviour> dependentScripts;
     [SerializeField]
     ScriptDependencies scriptDependencies;
-    //maps dependent script --> scripts it's waiting on to load
+    [SerializeField]
+    bool verbose;
+    //maps dependent script --> scripts it's still waiting on to load
     Dictionary<IDependentScript, List<ILoadableScript>> dependencyDictionary;
     // maps scripts --> scripts waiting on it to load
     Dictionary<ILoadableScript, List<IDependentScript>> reverseDependencyDict;
@@ -28,9 +39,10 @@ public class ScriptDependencyManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GenerateDependencyDict();
-        GenerateReverseDict();
-        SubscribeToAllDependencies();
+        dependencyDictionary = new Dictionary<IDependentScript, List<ILoadableScript>>();
+        reverseDependencyDict = new Dictionary<ILoadableScript, List<IDependentScript>>();
+
+        GenerateDependencyDicts();
     }
 
     // Update is called once per frame
@@ -39,55 +51,75 @@ public class ScriptDependencyManager : MonoBehaviour
         
     }
 
-    void GenerateDependencyDict() {
+    void GenerateDependencyDicts() {
         if (dependentScripts.Count != scriptDependencies.list.Count) {
             Debug.LogError("There should be a list of script dependencies for every dependent script in Dependent Scripts. Found " + dependentScripts.Count + " dependent scripts but only " + scriptDependencies.list.Count + " lists of script dependencies.");
             return;
         }
 
-        dependencyDictionary = new Dictionary<IDependentScript, List<ILoadableScript>>();
         for (int i = 0; i < dependentScripts.Count; i++) {
-            MonoBehaviour script = dependentScripts[i];
-            if (script is IDependentScript) {
-                List<ILoadableScript> dependencies = new List<ILoadableScript>();
-                foreach (MonoBehaviour dependency in scriptDependencies.list[i].list) {
-                    if (dependency is ILoadableScript) {
-                        dependencies.Add((ILoadableScript) dependency);
-                    } else {
-                        Debug.LogError(dependency.GetType().Name + " is not an ILoadableScript.");
-                    }
+            if (!(dependentScripts[i] is IDependentScript)) {
+                Debug.LogError(dependentScripts[i].GetType().Name + " is not an IDependentScript.");
+                continue;
+            }
+            IDependentScript currScript = (IDependentScript) dependentScripts[i];
+            
+            List<ILoadableScript> currScriptDependencies = new List<ILoadableScript>();
+            foreach (MonoBehaviour dependency in scriptDependencies.list[i].list) {
+                if (!(dependency is ILoadableScript)) {
+                    Debug.LogError(dependency.GetType().Name + " is not an ILoadableScript.");
+                    continue;
                 }
-                dependencyDictionary[(IDependentScript) script] = dependencies;
-            } else {
-                Debug.LogError(script.GetType().Name + " is not an IDependentScript.");
-            }   
+                currScriptDependencies.Add((ILoadableScript) dependency);
+            }
+
+            UpdateDependencyDicts(currScript, currScriptDependencies);
         }
     }
 
-    void GenerateReverseDict() {
-        reverseDependencyDict = new Dictionary<ILoadableScript, List<IDependentScript>>();
-        foreach (var item in dependencyDictionary) {
-            IDependentScript dep = item.Key;
-            foreach (ILoadableScript script in item.Value) {
-                if (!reverseDependencyDict.ContainsKey(script)) {
-                    reverseDependencyDict[script] = new List<IDependentScript>();
-                } 
-                reverseDependencyDict[script].Add(dep);
+    public void UpdateDependencyDicts(IDependentScript newDependentScript, List<ILoadableScript> newDependencies) {
+        if (dependencyDictionary.ContainsKey(newDependentScript)) {
+            Debug.Log("Already stated dependencies for " + newDependentScript.GetType().Name);
+            return; 
+        }
+
+        List<ILoadableScript> waitableDependencies = new List<ILoadableScript>();
+        foreach (ILoadableScript currDependency in newDependencies) {
+            //only wait on dependencies that haven't initialized yet 
+            if (!currDependency.IsInitialized()) { 
+                waitableDependencies.Add(currDependency);
+
+                //Also update reverseDependencyDict
+                if (reverseDependencyDict.ContainsKey(currDependency)) {
+                    reverseDependencyDict[currDependency].Add(newDependentScript);
+                } else { 
+                    //first time that the dependency is added to reverseDict
+                    currDependency.OnScriptInitialized += OnDependencyIntialized; //subscribe to initialization event of this dependency
+
+                    List<IDependentScript> newDependentScripts = new List<IDependentScript>();
+                    newDependentScripts.Add(newDependentScript);
+                    reverseDependencyDict[currDependency] = newDependentScripts; 
+                }
+            } else if (verbose) {
+                Debug.Log(currDependency.GetType().Name + " is already loaded for dependent " + newDependentScript.GetType().Name);
             }
         }
-    }
 
-    void SubscribeToAllDependencies() {
-        foreach (ILoadableScript script in reverseDependencyDict.Keys) {
-            script.OnScriptInitialized += OnDependencyIntialized;
+        if (waitableDependencies.Count <= 0) {
+            newDependentScript.OnAllDependenciesLoaded();
+        } else {
+            dependencyDictionary[newDependentScript] = waitableDependencies;
         }
     }
 
     void OnDependencyIntialized(ILoadableScript script) {
-        //Debug.Log(script.GetType().Name + " loaded!");
+        if (verbose)
+            Debug.Log(script.GetType().Name + " loaded!");
         foreach (IDependentScript dep in reverseDependencyDict[script]) {
             dependencyDictionary[dep].Remove(script);
-            //Debug.Log(dep.GetType().Name + " has " + dependencyDictionary[dep].Count + " dependencies left.");
+            if (verbose)
+                Debug.Log("\t" + dep.GetType().Name + " has " + dependencyDictionary[dep].Count + " dependencies left.");
+                
             if (dependencyDictionary[dep].Count <= 0) {
                 dep.OnAllDependenciesLoaded();
             }

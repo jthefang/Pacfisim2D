@@ -18,8 +18,10 @@ public class Drone : MonoBehaviour, IPooledObject
     // Update is called once per frame
     void FixedUpdate()
     {
-        LookAtPlayer();
-        FollowPlayer();
+        if (spriteManager.gameManager.IsPlaying) {
+            LookAtPlayer();
+            FollowPlayer();
+        }
     }
 
     public void OnObjectInitiate(SpriteManager sm) {

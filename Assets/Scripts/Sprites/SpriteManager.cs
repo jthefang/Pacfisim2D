@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class SpriteManager : MonoBehaviour, ISpriteManager, ILoadableScript
+public class SpriteManager : MonoBehaviour, ILoadableScript
 {
     [SerializeField]
-    protected GameManager gameManager;
+    public GameManager gameManager;
 
     public GameObject spritePrefab;
     protected List<GameObject> sprites;
@@ -40,10 +40,15 @@ public class SpriteManager : MonoBehaviour, ISpriteManager, ILoadableScript
     protected ObjectPooler objectPooler;
 
     public event Action<ILoadableScript> OnScriptInitialized;
+    bool _isInitialized = false;
+    public bool IsInitialized () {
+        return this._isInitialized;
+    }
 
     // Start is called before the first frame update
     void Start() {
         InitSpriteManager();
+        this._isInitialized = true;
     }
 
     public virtual void InitSpriteManager()
@@ -83,9 +88,10 @@ public class SpriteManager : MonoBehaviour, ISpriteManager, ILoadableScript
         SpawnSprites();
     }
 
-    public void OnGameOver(GameManager gm) {
-        DestroyAll();
+    public virtual void OnGameOver(GameManager gm) {
+        Invoke("DestroyAll", gameManager.GAME_OVER_DELAY);
     }
+
     void OnNewPlayer(Player player) {
         this.player = player;
     }
@@ -107,16 +113,6 @@ public class SpriteManager : MonoBehaviour, ISpriteManager, ILoadableScript
 
     public void ResetSpawnTimer() {
         timeTilSpawn = spawnDelay;
-    }
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-    
-    public void OnAfterDeserialize()
-    {
-
     }
 
 }

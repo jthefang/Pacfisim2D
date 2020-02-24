@@ -14,9 +14,10 @@ public class Player : MonoBehaviour
             this._gameManager = value;
         }
     }
-    public AudioClip hitSound;
 
-    private AudioSource audioSource;
+    [SerializeField]
+    AudioClip hitSound;
+    AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
@@ -34,9 +35,6 @@ public class Player : MonoBehaviour
     {
         if (gameManager.IsPlaying) {
             switch (other.gameObject.tag) {
-                case "Gate End":
-                    CollidedWithGateEnd(other.gameObject.GetComponent<Gate>());
-                    break;
                 case "Drone":
                     CollidedWithDrone(other.gameObject.GetComponent<Drone>());
                     break;
@@ -44,6 +42,26 @@ public class Player : MonoBehaviour
                     break;
             }
         }
+    }
+
+    void OnTriggerEnter2D(Collider2D other) {
+        if (gameManager.IsPlaying) {
+            switch (other.gameObject.tag) {
+                case "Gate End":
+                    CollidedWithGateEnd(other.gameObject.GetComponent<Gate>());
+                    break;
+                case "Gate Rope":
+                    CollidedWithGateRope(other.gameObject);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    void CollidedWithGateRope(GameObject gateRopeObject) {
+        Gate gate = gateRopeObject.transform.parent.gameObject.GetComponent<Gate>();
+        gate.Explode();
     }
 
     void CollidedWithGateEnd(Gate gate) {

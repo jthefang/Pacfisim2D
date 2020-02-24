@@ -13,6 +13,10 @@ public class CameraRig : MonoBehaviour, ILoadableScript
     [SerializeField]
     private GameManager gameManager;
     public event Action<ILoadableScript> OnScriptInitialized;
+    bool _isInitialized = false;
+    public bool IsInitialized () {
+        return this._isInitialized;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +24,7 @@ public class CameraRig : MonoBehaviour, ILoadableScript
         rigTransform = this.transform.parent;
         gameManager.OnNewPlayer += OnNewPlayer;
 
+        this._isInitialized = true;
         OnScriptInitialized?.Invoke(this);
     }
 

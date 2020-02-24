@@ -26,6 +26,10 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
     public List<Pool> pools;
     public Dictionary<string, Queue<GameObject>> poolDictionary; 
     public event Action<ILoadableScript> OnScriptInitialized;
+    bool _isInitialized = false;
+    public bool IsInitialized () {
+        return this._isInitialized;
+    }
 
     void Start() {
         poolDictionary = new Dictionary<string, Queue<GameObject>>();  
@@ -48,6 +52,7 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
             poolDictionary.Add(pool.tag, objectPool);
         }
 
+        this._isInitialized = true;
         OnScriptInitialized?.Invoke(this);
     }
 
@@ -71,16 +76,6 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
         poolDictionary[tag].Enqueue(objectToSpawn); //if we reach our max number of objects, reuse this guy
 
         return objectToSpawn;
-    }
-
-    public void OnBeforeSerialize()
-    {
-
-    }
-    
-    public void OnAfterDeserialize()
-    {
-
     }
 
 }

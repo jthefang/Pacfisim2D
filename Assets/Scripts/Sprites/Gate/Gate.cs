@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+    There's a Polygon Collider on the parent Gate GameObject because we don't want it 
+    to fall apart (break into it's constiruent 3 components: 2 gate ends, gate rope) on collision with the bounds. But we still need it to register the collision as a unit. Hence, that's why the collider is over the 2 ends of the Gate (the points that will actually collide with the bounds).
+*/
 public class Gate : MonoBehaviour, IPooledObject
 {
     public Vector2 rotateSpeedRange = new Vector2(30.0f, 50.0f);
@@ -13,6 +17,7 @@ public class Gate : MonoBehaviour, IPooledObject
     public float blastRadius;
 
     private GameObject explosion;
+    SpriteManager spriteManager;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +26,7 @@ public class Gate : MonoBehaviour, IPooledObject
     }
 
     public void OnObjectInitiate(SpriteManager sm) {
+        spriteManager = sm;
         this.transform.SetParent(sm.transform);
     }
 
@@ -35,13 +41,9 @@ public class Gate : MonoBehaviour, IPooledObject
     // Update is called once per frame
     void FixedUpdate()
     {
-        Spin();
-    }
-
-    void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag.Contains("Player")) {
-            Explode();
-        } 
+        if (spriteManager.gameManager.IsPlaying) {
+            Spin();
+        }
     }
 
     void Spin() {

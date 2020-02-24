@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     public event Action<GameState, GameState> OnGameStateChange;
     public event Action<GameManager> OnGameStart;
     public event Action<GameManager> OnGameOver;
+    public float GAME_OVER_DELAY = 1.5f;
 
     public GameObject playerPrefab;
     [SerializeField]
@@ -59,6 +60,10 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     public event Action<Player> OnNewPlayer;
 
     public event Action<ILoadableScript> OnScriptInitialized;
+    bool _isInitialized = false;
+    public bool IsInitialized () {
+        return this._isInitialized;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +74,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         OnGameStart += OnGameStartHandler;
         OnGameOver += OnGameOverHandler;
 
+        this._isInitialized = true;
         OnScriptInitialized?.Invoke(this);
     }
 

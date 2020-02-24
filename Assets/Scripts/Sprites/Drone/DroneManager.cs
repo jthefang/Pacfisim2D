@@ -49,4 +49,11 @@ public class DroneManager : SpriteManager
         }
     }
 
+    public override void OnGameOver(GameManager gm) {
+        foreach (GameObject drone in sprites) {
+            drone.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        }
+        base.OnGameOver(gm);
+    }
+
 }
