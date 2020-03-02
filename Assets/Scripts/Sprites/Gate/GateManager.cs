@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class GateManager : PeriodicSpawningSpriteManager
 {
-    float padding = 2.0f; //make sure gate doesn't spawn at edge of bounds
-    float minX, maxX, minY, maxY;
-
-    public override void InitSpawnLocations() {
-        minX = -bounds.x + padding;
-        maxX = bounds.x - padding;
-        minY = -bounds.y + padding;
-        maxY = bounds.y - padding;
-    }
-
     public override void OnGameStart(GameManager gm) {
+        base.OnGameStart(gm);
         ResetSpawnTimer();
         SpawnGateNearOrigin();
+    }
+
+    public override string GetSpriteName() {
+        return "Gate";
+    }
+
+    public override Vector2 GetSpawnLocPadding() {
+        GameObject gateObject = objectPooler.GetSpritePrefab(GetSpriteName());
+        Vector3 ropeSize = Util.GetSizeOfSprite(gateObject.transform.Find("Rope").gameObject); 
+        Vector3 gateEndSize = Util.GetSizeOfSprite(gateObject.transform.Find("Right Gate End").gameObject); 
+
+        //same in both directions since gate can rotate and x is the long axis
+        return new Vector2((ropeSize.x / 2) + gateEndSize.x, (ropeSize.x / 2) + gateEndSize.x);
     }
 
     public override void SpawnSprites() {

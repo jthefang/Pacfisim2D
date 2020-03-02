@@ -17,22 +17,26 @@ public class DroneManager : PeriodicSpawningSpriteManager
             Each spawn corner is 1/4 of the width and height of the bounds
     */
     public override void InitSpawnLocations() {
+        base.InitSpawnLocations();
         spawnLocations = new float[4,4] {
-            {-bounds.x, -bounds.x / 2, bounds.y / 2, bounds.y}, //top left sixteenth quadrant
-            {bounds.x / 2, bounds.x, bounds.y / 2, bounds.y}, 
-            {-bounds.x, -bounds.x / 2, -bounds.y, -bounds.y / 2}, 
-            {bounds.x / 2, bounds.x, -bounds.y, -bounds.y / 2}
+            {minX, -gameManager.bounds.x / 2, gameManager.bounds.y / 2, maxY}, //bot left sixteenth quadrant
+            {gameManager.bounds.x / 2, maxX, gameManager.bounds.y / 2, maxY}, //bottom right
+            {minX, -gameManager.bounds.x / 2, minY, -gameManager.bounds.y / 2}, //top left
+            {gameManager.bounds.x / 2, maxX, minY, -gameManager.bounds.y / 2} //top right
         };
+    }
+
+    public override string GetSpriteName() {
+        return "Drone";
     }
 
     public override void SpawnSprites() {
         if (ShouldSpawn) {
             int spawnIdx = Random.Range(0, 4);
-            //Make sure this spawn location is not where the player currently is (within a margin)
+            //Make sure this spawn location is not where the player currently is
             Vector3 playerPos = player.transform.position;
-            float margin = 2;
-            bool withinX = (playerPos.x >= spawnLocations[spawnIdx, 0] - margin) && (playerPos.x <= spawnLocations[spawnIdx, 1] + margin);
-            bool withinY = (playerPos.y >= spawnLocations[spawnIdx, 2] - margin) && (playerPos.y <= spawnLocations[spawnIdx, 3] + margin);
+            bool withinX = (playerPos.x >= spawnLocations[spawnIdx, 0]) && (playerPos.x <= spawnLocations[spawnIdx, 1]);
+            bool withinY = (playerPos.y >= spawnLocations[spawnIdx, 2]) && (playerPos.y <= spawnLocations[spawnIdx, 3]);
             if (withinX && withinY) { //move to next spawn location if so...
                 spawnIdx = (spawnIdx + 1) % 4;
             }

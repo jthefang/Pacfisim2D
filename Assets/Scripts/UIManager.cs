@@ -51,11 +51,11 @@ public class UIManager : MonoBehaviour, ILoadableScript
     }
 
     void OnScoreChange(ScoreManager scoreManager) {
-        scoreIntText.text = scoreManager.Score.ToString();
+        scoreIntText.text = scoreManager.Score.ToString("n0");
     }
 
     void OnScoreMultiplierChange(ScoreManager scoreManager) {
-        scoreMultiplierIntText.text = "x " + scoreManager.ScoreMultiplier.ToString();
+        scoreMultiplierIntText.text = "x " + scoreManager.ScoreMultiplier.ToString("n0");
     }
 
     void ShowGameOverPanel() {

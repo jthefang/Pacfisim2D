@@ -30,13 +30,8 @@ public class PeriodicSpawningSpriteManager : SpriteManager
 
     public override void InitSpriteManager() {
         audioSource = gameObject.GetComponent<AudioSource>();
-        InitSpawnLocations();
 
         base.InitSpriteManager();
-    }
-
-    public virtual void InitSpawnLocations() {
-        //pass
     }
 
     // Update is called once per frame
@@ -51,6 +46,7 @@ public class PeriodicSpawningSpriteManager : SpriteManager
     }
 
     public override void OnGameStart(GameManager gm) {
+        base.OnGameStart(gm);
         PeriodicSpawn();
     }
 

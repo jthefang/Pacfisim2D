@@ -14,13 +14,15 @@ public class MultiplierManager : SpriteManager
 
     float xPadding, yPadding;
 
-    public override void OnGameStart(GameManager gm) {
-        GameObject multiplierObject = objectPooler.GetSpritePrefab("Multiplier");
+    public override string GetSpriteName() {
+        return "Multiplier";
+    }
+
+    public override Vector2 GetSpawnLocPadding() {
+        GameObject multiplierObject = objectPooler.GetSpritePrefab(GetSpriteName());
         
         Vector3 multiplierSize = Util.GetSizeOfSprite(multiplierObject.transform.Find("outer_shell").gameObject); 
-        //make sure multiplier doesn't spawn near edge
-        xPadding = multiplierSize.x / 2;
-        yPadding = multiplierSize.y / 2;
+        return new Vector2(multiplierSize.x / 2, multiplierSize.y / 2);
     }
 
     public GameObject SpawnSprite(Vector2 pos, Quaternion rotation) {
@@ -32,12 +34,12 @@ public class MultiplierManager : SpriteManager
     }
 
     public GameObject SpawnSpriteAround(Vector2 pos, float spawnRadius) {
-        float minX = Mathf.Max(-gameManager.bounds.x + xPadding, pos.x - spawnRadius);
-        float maxX = Mathf.Min(pos.x + spawnRadius, gameManager.bounds.x - xPadding);
-        float minY = Mathf.Max(-gameManager.bounds.y + yPadding, pos.y - spawnRadius);
-        float maxY = Mathf.Min(pos.y + spawnRadius, gameManager.bounds.y - yPadding);
+        float newMinX = Mathf.Max(minX, pos.x - spawnRadius);
+        float newMaxX = Mathf.Min(pos.x + spawnRadius, maxX);
+        float newMinY = Mathf.Max(minY, pos.y - spawnRadius);
+        float newMaxY = Mathf.Min(pos.y + spawnRadius, maxY);
         
-        Vector2 randPos = new Vector2(UnityEngine.Random.Range(minX, maxX), UnityEngine.Random.Range(minY, maxY));
+        Vector2 randPos = new Vector2(UnityEngine.Random.Range(newMinX, newMaxX), UnityEngine.Random.Range(newMinY, newMaxY));
         return SpawnSprite(randPos, UnityEngine.Random.rotation);
     }
 }
