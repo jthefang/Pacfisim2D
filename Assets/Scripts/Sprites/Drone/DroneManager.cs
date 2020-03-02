@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DroneManager : SpriteManager
+public class DroneManager : PeriodicSpawningSpriteManager
 {   
     private enum Corner {
         TOPLEFT = 0,
@@ -17,9 +17,8 @@ public class DroneManager : SpriteManager
             Each spawn corner is 1/4 of the width and height of the bounds
     */
     public override void InitSpawnLocations() {
-        Vector3 bounds = Bounds.GetComponent<SpriteRenderer>().bounds.extents;
         spawnLocations = new float[4,4] {
-            {-bounds.x, -bounds.x / 2, bounds.y / 2, bounds.y}, 
+            {-bounds.x, -bounds.x / 2, bounds.y / 2, bounds.y}, //top left sixteenth quadrant
             {bounds.x / 2, bounds.x, bounds.y / 2, bounds.y}, 
             {-bounds.x, -bounds.x / 2, -bounds.y, -bounds.y / 2}, 
             {bounds.x / 2, bounds.x, -bounds.y, -bounds.y / 2}
@@ -44,9 +43,16 @@ public class DroneManager : SpriteManager
                 Vector2 spawnLoc = new Vector2(Random.Range(spawnLocations[spawnIdx, 0] + padding, spawnLocations[spawnIdx, 1] - padding), Random.Range(spawnLocations[spawnIdx, 2] + padding, spawnLocations[spawnIdx, 3] - padding));
                 
                 GameObject droneObj = objectPooler.SpawnFromPool("Drone", spawnLoc, Quaternion.identity);
+                droneObj.GetComponent<Drone>().OnDroneDeath += OnDroneDeath;
+                //Debug.Log("Subscribed to death");
                 sprites.Add(droneObj);
             }
         }
+    }
+
+    void OnDroneDeath(Drone drone) {
+        gameManager.scoreManager.UpdateScoreWithEvent("droneDeath");
+        //Debug.Log("death happened");
     }
 
     public override void OnGameOver(GameManager gm) {

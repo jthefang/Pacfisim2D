@@ -17,6 +17,14 @@ public enum GameState {
 
 public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
 {
+    #region Singleton
+    public static GameManager Instance;
+    //reference this only version as MultiplierManager.Instance.SpawnSprite(randPos, UnityEngine.Random.rotation);
+    private void Awake() {
+        Instance = this;
+    }
+    #endregion
+
     private GameState _currGameState;
     public GameState CurrGameState
     {
@@ -49,6 +57,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     public event Action<GameManager> OnGameOver;
     public float GAME_OVER_DELAY = 1.5f;
 
+    public ScoreManager scoreManager;
     public GameObject playerPrefab;
     [SerializeField]
     private AudioClip gameStartSound;
@@ -58,6 +67,14 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     private AudioSource audioSource;
     private Player player;
     public event Action<Player> OnNewPlayer;
+
+    [SerializeField]
+    protected GameObject Bounds;
+    /**
+        The game bounds go from top left: -bounds.x, -bounds.y 
+            -> bot right: +bounds.x, +bounds.y
+    */
+    public Vector3 bounds;
 
     public event Action<ILoadableScript> OnScriptInitialized;
     bool _isInitialized = false;
@@ -69,6 +86,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     void Start()
     {
         audioSource = gameObject.GetComponent<AudioSource>();
+        bounds = Bounds.GetComponent<SpriteRenderer>().bounds.extents;
         
         OnGameStateChange += OnGameStateChangeHandler;
         OnGameStart += OnGameStartHandler;

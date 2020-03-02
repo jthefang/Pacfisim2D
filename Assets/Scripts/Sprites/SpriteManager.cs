@@ -5,35 +5,9 @@ using UnityEngine;
 
 public class SpriteManager : MonoBehaviour, ILoadableScript
 {
-    [SerializeField]
-    public GameManager gameManager;
-
-    public GameObject spritePrefab;
-    protected List<GameObject> sprites;
-
-    [SerializeField]
-    protected int spawnAmt = 15;
-    [SerializeField]
-    protected float spawnDelay = 3.0f;
-    protected float timeTilSpawn;
-    AudioSource audioSource;
-    [SerializeField]
-    AudioClip spawnSound;
-
-    [SerializeField]
-    bool _shouldSpawn = true;
-    public bool ShouldSpawn {
-        get {
-            return this._shouldSpawn;
-        }
-        set {
-            this._shouldSpawn = value;
-        }
-    }
-
-    [SerializeField]
-    protected GameObject Bounds;
+    protected GameManager gameManager;
     protected Vector3 bounds;
+    protected List<GameObject> sprites;
 
     public Player player;
 
@@ -47,6 +21,8 @@ public class SpriteManager : MonoBehaviour, ILoadableScript
 
     // Start is called before the first frame update
     void Start() {
+        gameManager = GameManager.Instance;
+        bounds = gameManager.bounds;
         InitSpriteManager();
         this._isInitialized = true;
     }
@@ -54,11 +30,7 @@ public class SpriteManager : MonoBehaviour, ILoadableScript
     public virtual void InitSpriteManager()
     {
         objectPooler = ObjectPooler.Instance;
-        audioSource = gameObject.GetComponent<AudioSource>();
-        bounds = Bounds.GetComponent<SpriteRenderer>().bounds.extents;
-
         sprites = new List<GameObject>();
-        InitSpawnLocations();
 
         gameManager.OnGameStart += OnGameStart;
         gameManager.OnGameOver += OnGameOver;
@@ -67,25 +39,14 @@ public class SpriteManager : MonoBehaviour, ILoadableScript
         OnScriptInitialized?.Invoke(this);
     }
 
-    public virtual void InitSpawnLocations() {
-        //pass
-    }
-
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (gameManager.IsPlaying) {
-            timeTilSpawn -= Time.deltaTime;
-            if (timeTilSpawn < 0) {
-                SpawnSprites();
-                ResetSpawnTimer();
-            }
-        }
+        
     }
 
     public virtual void OnGameStart(GameManager gm) {
-        ResetSpawnTimer();
-        SpawnSprites();
+        
     }
 
     public virtual void OnGameOver(GameManager gm) {
@@ -100,19 +61,11 @@ public class SpriteManager : MonoBehaviour, ILoadableScript
         //pass
     }
 
-    public void PlaySpawnSound() {
-        audioSource.PlayOneShot(spawnSound);
-    }
-
     public void DestroyAll() {
         foreach (GameObject sprite in sprites) {
             sprite.SetActive(false);
         }
         sprites = new List<GameObject>();
-    }
-
-    public void ResetSpawnTimer() {
-        timeTilSpawn = spawnDelay;
     }
 
 }

@@ -8,6 +8,9 @@ TagManager:
   - Drone
   - Explosion
   - Gate Rope
+  - MultiplierGravField
+  - MultiplierHitBox
+  - InnerMultiplier
   layers:
   - Default
   - TransparentFX

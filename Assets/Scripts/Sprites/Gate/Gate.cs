@@ -18,11 +18,12 @@ public class Gate : MonoBehaviour, IPooledObject
 
     private GameObject explosion;
     SpriteManager spriteManager;
+    GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameManager = GameManager.Instance;
     }
 
     public void OnObjectInitiate(SpriteManager sm) {
@@ -41,7 +42,7 @@ public class Gate : MonoBehaviour, IPooledObject
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (spriteManager.gameManager.IsPlaying) {
+        if (gameManager.IsPlaying) {
             Spin();
         }
     }

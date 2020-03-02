@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GateManager : SpriteManager
+public class GateManager : PeriodicSpawningSpriteManager
 {
     float padding = 2.0f; //make sure gate doesn't spawn at edge of bounds
     float minX, maxX, minY, maxY;

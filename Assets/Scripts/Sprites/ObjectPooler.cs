@@ -24,6 +24,7 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
     #endregion
 
     public List<Pool> pools;
+    Dictionary<string, Pool> poolObjectDictionary;
     public Dictionary<string, Queue<GameObject>> poolDictionary; 
     public event Action<ILoadableScript> OnScriptInitialized;
     bool _isInitialized = false;
@@ -32,9 +33,12 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
     }
 
     void Start() {
+        poolObjectDictionary = new Dictionary<string, Pool>();
         poolDictionary = new Dictionary<string, Queue<GameObject>>();  
 
         foreach (Pool pool in pools)  {
+            poolObjectDictionary[pool.tag] = pool;
+
             // create a Q for each pool
             Queue<GameObject> objectPool = new Queue<GameObject>();
 
@@ -74,8 +78,11 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
         }
 
         poolDictionary[tag].Enqueue(objectToSpawn); //if we reach our max number of objects, reuse this guy
-
         return objectToSpawn;
+    }
+
+    public GameObject GetSpritePrefab(string tag) {
+        return poolObjectDictionary[tag].prefab;
     }
 
 }

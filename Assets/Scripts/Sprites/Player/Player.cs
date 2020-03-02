@@ -53,6 +53,12 @@ public class Player : MonoBehaviour
                 case "Gate Rope":
                     CollidedWithGateRope(other.gameObject);
                     break;
+                case "MultiplierGravField":
+                    other.gameObject.GetComponent<Multiplier>().GravitateTowards(this);
+                    break;
+                case "MultiplierHitBox":
+                    GameObject multiplierObject = other.gameObject.transform.parent.gameObject;multiplierObject.GetComponent<Multiplier>().Collect(this);
+                    break;
                 default:
                     break;
             }

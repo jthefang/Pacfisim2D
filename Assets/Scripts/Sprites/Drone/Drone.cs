@@ -1,24 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Drone : MonoBehaviour, IPooledObject
 {
     public Transform targetTransform;
     public float speed = 8.0f;
+    [SerializeField]
+    int numMultipliersOnDeath = 10;
+    [SerializeField]
+    float multiplierSpawnRadius = 2.0f;
 
     SpriteManager spriteManager;
+    GameManager gameManager;
+    MultiplierManager multiplierManager;
+    public event Action<Drone> OnDroneDeath;
+    protected ObjectPooler objectPooler;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        objectPooler = ObjectPooler.Instance;
+        multiplierManager = MultiplierManager.Instance;
+        gameManager = GameManager.Instance;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (spriteManager.gameManager.IsPlaying) {
+        if (gameManager.IsPlaying) {
             LookAtPlayer();
             FollowPlayer();
         }
@@ -41,6 +52,12 @@ public class Drone : MonoBehaviour, IPooledObject
 
     void Die() {
         gameObject.SetActive(false);
+
+        for (int i = 0; i < numMultipliersOnDeath; i++) {
+            GameObject multiplierObject = multiplierManager.SpawnSpriteAround(this.transform.position, multiplierSpawnRadius);
+        }
+
+        OnDroneDeath?.Invoke(this);
     }
 
     void LookAtPlayer() {
