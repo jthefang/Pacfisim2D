@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxGravitateTime: 0.5
   timeTilInactive: 3
+  driftSpeed: 1.5
   pickupMultiplierSound: {fileID: 8300000, guid: 3a9c7fb738e314eea863b88afbd4d6c1,
     type: 3}
 --- !u!61 &-5147357583065769021

@@ -15,8 +15,14 @@ public class Multiplier : MonoBehaviour, IPooledObject
     Transform gravitateTarget; 
     Vector2 originalPosition;
 
+    // How the multiplier pellet drifts after spawning from the ashes of a drone
+    Vector3 driftDirection; //should be random
+    [SerializeField]
+    float driftSpeed = 0.1f; //should be really small
+
     ScoreManager scoreManager;
     SpriteManager spriteManager;
+    GameManager gameManager;
 
     AudioSource audioSource;
     [SerializeField]
@@ -27,21 +33,26 @@ public class Multiplier : MonoBehaviour, IPooledObject
     {
         shouldGravitate = false;
         scoreManager = ScoreManager.Instance;
+        gameManager = GameManager.Instance;
         audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (shouldGravitate) {
-            currGravitateTime += Time.deltaTime;
-            float t = currGravitateTime / maxGravitateTime;
-            if (currGravitateTime > maxGravitateTime) { //just get on top of the player 
-                transform.position = gravitateTarget.position;
+        if (gameManager.IsPlaying) {
+            if (shouldGravitate) {
+                currGravitateTime += Time.deltaTime;
+                float t = currGravitateTime / maxGravitateTime;
+                if (currGravitateTime > maxGravitateTime) { //just get on top of the player 
+                    transform.position = gravitateTarget.position;
+                } else {
+                    float newX = Mathf.Lerp(transform.position.x, gravitateTarget.position.x, t);
+                    float newY = Mathf.Lerp(transform.position.y, gravitateTarget.position.y, t);
+                    transform.position = new Vector2(newX, newY);
+                }
             } else {
-                float newX = Mathf.Lerp(transform.position.x, gravitateTarget.position.x, t);
-                float newY = Mathf.Lerp(transform.position.y, gravitateTarget.position.y, t);
-                transform.position = new Vector2(newX, newY);
+                Drift();
             }
         }
     }
@@ -64,6 +75,9 @@ public class Multiplier : MonoBehaviour, IPooledObject
         shouldGravitate = false;
     }
 
+    /**
+        This multiplier's "grav field" (Box Collider) is run into by player
+    */
     public void GravitateTowards(Player player) {
         gravitateTarget = player.transform;
         originalPosition = transform.position;
@@ -75,8 +89,14 @@ public class Multiplier : MonoBehaviour, IPooledObject
         spriteManager = sm;
         this.transform.SetParent(sm.transform);
     }
+
+    void Drift() {
+        transform.position += driftSpeed * driftDirection * Time.deltaTime;
+    }
     
     public void OnObjectSpawn() {
+        driftDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+        driftDirection.Normalize();
         Invoke("Die", timeTilInactive);
     }
 
