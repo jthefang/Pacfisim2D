@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class GateManager : PeriodicSpawningSpriteManager
 {
+    bool firstSpawn;
+
     public override void OnGameStart(GameManager gm) {
+        firstSpawn = true;
         base.OnGameStart(gm);
-        ResetSpawnTimer();
-        SpawnGateNearOrigin();
     }
 
     public override string GetSpriteName() {
@@ -20,11 +21,16 @@ public class GateManager : PeriodicSpawningSpriteManager
         Vector3 gateEndSize = Util.GetSizeOfSprite(gateObject.transform.Find("Right Gate End").gameObject); 
 
         //same in both directions since gate can rotate and x is the long axis
-        return new Vector2((ropeSize.x / 2) + gateEndSize.x, (ropeSize.x / 2) + gateEndSize.x);
+        return new Vector2(ropeSize.x + gateEndSize.x, ropeSize.x + gateEndSize.x);
     }
 
     public override void SpawnSprites() {
-        SpawnGate();
+        if (firstSpawn) {
+            SpawnGateNearOrigin();
+            firstSpawn = false;
+        } else {
+            SpawnGate();
+        }
     }
 
     void SpawnGateNearOrigin() {
@@ -35,8 +41,8 @@ public class GateManager : PeriodicSpawningSpriteManager
         if (ShouldSpawn) {
             Vector2 randPos = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
 
-            while (Vector2.Distance(randPos, player.transform.position) < 1.5f) { 
-                //make sure gate doesn't spawn close to player
+            while (Vector2.Distance(randPos, player.transform.position) < 5 * playerSize) { 
+                //make sure gate doesn't spawn close to player 
                 randPos = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
             }
             SpawnGateAt(randPos);

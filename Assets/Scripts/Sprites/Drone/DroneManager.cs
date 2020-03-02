@@ -19,10 +19,10 @@ public class DroneManager : PeriodicSpawningSpriteManager
     public override void InitSpawnLocations() {
         base.InitSpawnLocations();
         spawnLocations = new float[4,4] {
-            {minX, -gameManager.bounds.x / 2, gameManager.bounds.y / 2, maxY}, //bot left sixteenth quadrant
-            {gameManager.bounds.x / 2, maxX, gameManager.bounds.y / 2, maxY}, //bottom right
-            {minX, -gameManager.bounds.x / 2, minY, -gameManager.bounds.y / 2}, //top left
-            {gameManager.bounds.x / 2, maxX, minY, -gameManager.bounds.y / 2} //top right
+            {minX, -gameManager.bounds.x / 2, gameManager.bounds.y / 2, maxY}, //top left sixteenth quadrant
+            {gameManager.bounds.x / 2, maxX, gameManager.bounds.y / 2, maxY}, //top right
+            {minX, -gameManager.bounds.x / 2, minY, -gameManager.bounds.y / 2}, //bot left
+            {gameManager.bounds.x / 2, maxX, minY, -gameManager.bounds.y / 2} //bot right
         };
     }
 
@@ -32,14 +32,7 @@ public class DroneManager : PeriodicSpawningSpriteManager
 
     public override void SpawnSprites() {
         if (ShouldSpawn) {
-            int spawnIdx = Random.Range(0, 4);
-            //Make sure this spawn location is not where the player currently is
-            Vector3 playerPos = player.transform.position;
-            bool withinX = (playerPos.x >= spawnLocations[spawnIdx, 0]) && (playerPos.x <= spawnLocations[spawnIdx, 1]);
-            bool withinY = (playerPos.y >= spawnLocations[spawnIdx, 2]) && (playerPos.y <= spawnLocations[spawnIdx, 3]);
-            if (withinX && withinY) { //move to next spawn location if so...
-                spawnIdx = (spawnIdx + 1) % 4;
-            }
+            int spawnIdx = GetSpawnCornerIdx();
             
             PlaySpawnSound();
             float padding = 0.5f; //make sure drone doesn't spawn at edge
@@ -48,15 +41,29 @@ public class DroneManager : PeriodicSpawningSpriteManager
                 
                 GameObject droneObj = objectPooler.SpawnFromPool("Drone", spawnLoc, Quaternion.identity);
                 droneObj.GetComponent<Drone>().OnDroneDeath += OnDroneDeath;
-                //Debug.Log("Subscribed to death");
                 sprites.Add(droneObj);
             }
         }
     }
 
+    int GetSpawnCornerIdx() {
+        int spawnIdx = Random.Range(0, 4);
+
+        //Make sure this spawn location is not where the player currently is (within a margin)
+        Vector3 playerPos = player.transform.position;
+        float margin = 5*playerSize;
+        bool withinX = (playerPos.x >= spawnLocations[spawnIdx, 0] - margin) && (playerPos.x <= spawnLocations[spawnIdx, 1] + margin);
+        bool withinY = (playerPos.y >= spawnLocations[spawnIdx, 2] - margin) && (playerPos.y <= spawnLocations[spawnIdx, 3] + margin);
+
+        //Debug.Log("(minX, minY) -> (maxX, maxY) : " + spawnLocations[spawnIdx, 0] + ", " + spawnLocations[spawnIdx, 2] + " -> " + + spawnLocations[spawnIdx, 1] + ", " + spawnLocations[spawnIdx, 3]);
+        if (withinX && withinY) { //move to next spawn location if so...
+            spawnIdx = (spawnIdx + 1) % 4;
+        }
+        return spawnIdx;
+    }
+
     void OnDroneDeath(Drone drone) {
         gameManager.scoreManager.UpdateScoreWithEvent("droneDeath");
-        //Debug.Log("death happened");
     }
 
     public override void OnGameOver(GameManager gm) {

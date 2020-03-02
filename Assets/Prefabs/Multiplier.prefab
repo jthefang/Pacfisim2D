@@ -258,7 +258,7 @@ GameObject:
   - component: {fileID: 5171368013686959206}
   - component: {fileID: 2378037532882835683}
   m_Layer: 0
-  m_Name: outer_shell
+  m_Name: inner_ellipse
   m_TagString: MultiplierHitBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -366,7 +366,7 @@ GameObject:
   - component: {fileID: 5171368013939956309}
   - component: {fileID: 5171368013939956310}
   m_Layer: 0
-  m_Name: inner_ellipse
+  m_Name: outer_shell
   m_TagString: InnerMultiplier
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -427,7 +427,7 @@ SpriteRenderer:
   m_SortingOrder: 2
   m_Sprite: {fileID: -1815879643214999800, guid: 92a5c9ef702fb4eef8a3cfc2ba1f9e2b,
     type: 3}
-  m_Color: {r: 0.10980393, g: 0.49803925, b: 0.5137255, a: 1}
+  m_Color: {r: 0.011614448, g: 0.26341125, b: 0.2735849, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

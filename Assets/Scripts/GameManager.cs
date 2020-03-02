@@ -136,7 +136,8 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     }
 
     private void playMainTheme() {
-        audioSource.Play();
+        if (IsPlaying)
+            audioSource.Play();
     }
 
     private void spawnPlayer() {

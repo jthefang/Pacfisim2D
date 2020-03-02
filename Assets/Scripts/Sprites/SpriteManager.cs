@@ -7,6 +7,7 @@ public class SpriteManager : MonoBehaviour, ILoadableScript
 {
     protected Vector2 spawnLocPadding; //make sure sprite doesn't spawn at edge of bounds
     protected float minX, maxX, minY, maxY;
+    protected float playerSize;
     
     protected GameManager gameManager;
     public Player player;
@@ -62,6 +63,8 @@ public class SpriteManager : MonoBehaviour, ILoadableScript
     */
     public virtual void InitSpawnLocations() {
         spawnLocPadding = GetSpawnLocPadding();
+        Vector2 playerSizeVector = Util.GetSizeOfSprite(player.gameObject);
+        playerSize = Mathf.Max(playerSizeVector.x, playerSizeVector.y);
         minX = -gameManager.bounds.x + spawnLocPadding.x;
         maxX = gameManager.bounds.x - spawnLocPadding.x;
         minY = -gameManager.bounds.y + spawnLocPadding.y;
