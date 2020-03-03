@@ -9,6 +9,7 @@ public interface ILoadableScript {
     bool IsInitialized(); //dependent scripts will only wait on LoadableScripts where this is false (haven't been initialized yet), see ScriptDependencyManager.GenerateDependencyDict
 
     /** 
+    #region ILoadableScript
     public event Action<ILoadableScript> OnScriptInitialized;
     bool _isInitialized = false;
     bool isInitialized {
@@ -25,6 +26,7 @@ public interface ILoadableScript {
     public bool IsInitialized () {
         return isInitialized;
     }
+    #endregion
 
     void Start()
     {

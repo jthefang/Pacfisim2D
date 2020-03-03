@@ -29,7 +29,9 @@ public class GateManager : PeriodicSpawningSpriteManager
             SpawnGateNearOrigin();
             firstSpawn = false;
         } else {
-            SpawnGate();
+            for (int i = 0; i < SpawnAmount; i++) {
+                SpawnGate();
+            }
         }
     }
 

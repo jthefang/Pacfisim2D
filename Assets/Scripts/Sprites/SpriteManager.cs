@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class SpriteManager : MonoBehaviour, ILoadableScript
+public class SpriteManager : MonoBehaviour, ILoadableScript, IDependentScript
 {
     protected Vector2 spawnLocPadding; //make sure sprite doesn't spawn at edge of bounds
     protected float minX, maxX, minY, maxY;
@@ -22,20 +22,26 @@ public class SpriteManager : MonoBehaviour, ILoadableScript
 
     // Start is called before the first frame update
     void Start() {
-        gameManager = GameManager.Instance;
-        objectPooler = ObjectPooler.Instance;
+        
+    }
 
-        gameManager.OnGameStart += OnGameStart;
-        gameManager.OnGameOver += OnGameOver;
-        gameManager.OnNewPlayer += OnNewPlayer;
-
+    public void OnAllDependenciesLoaded() {
         InitSpriteManager();
         this._isInitialized = true;
     }
 
     public virtual void InitSpriteManager()
     {
+        gameManager = GameManager.Instance;
+        gameManager.OnGameStart += OnGameStart;
+        gameManager.OnGameOver += OnGameOver;
+        gameManager.OnNewPlayer += OnNewPlayer;
+
+        objectPooler = ObjectPooler.Instance;
         sprites = new List<GameObject>();
+
+        InitSpawnLocations();
+        
         OnScriptInitialized?.Invoke(this);
     }
 
@@ -63,20 +69,20 @@ public class SpriteManager : MonoBehaviour, ILoadableScript
     */
     public virtual void InitSpawnLocations() {
         spawnLocPadding = GetSpawnLocPadding();
-        Vector2 playerSizeVector = Util.GetSizeOfSprite(player.gameObject);
-        playerSize = Mathf.Max(playerSizeVector.x, playerSizeVector.y);
-        minX = -gameManager.bounds.x + spawnLocPadding.x;
-        maxX = gameManager.bounds.x - spawnLocPadding.x;
-        minY = -gameManager.bounds.y + spawnLocPadding.y;
-        maxY = gameManager.bounds.y - spawnLocPadding.y;
+        minX = -gameManager.GameBounds.x + spawnLocPadding.x;
+        maxX = gameManager.GameBounds.x - spawnLocPadding.x;
+        minY = -gameManager.GameBounds.y + spawnLocPadding.y;
+        maxY = gameManager.GameBounds.y - spawnLocPadding.y;
     }
 
     void OnNewPlayer(Player player) {
         this.player = player;
+        Vector2 playerSizeVector = Util.GetSizeOfSprite(player.gameObject);
+        playerSize = Mathf.Max(playerSizeVector.x, playerSizeVector.y);
     }
 
     public virtual void OnGameStart(GameManager gm) {
-        InitSpawnLocations();
+        //pass
     }
 
     public virtual void OnGameOver(GameManager gm) {

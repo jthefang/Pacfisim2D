@@ -340,13 +340,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GAME_OVER_DELAY: 1.5
-  scoreManager: {fileID: 1234765200}
-  playerPrefab: {fileID: 387052258234922331, guid: 81334230ff1d141578743b61d4025d15,
-    type: 3}
+  gameDifficultyLevels:
+  - numDronesToSpawn: 15
+    droneSpawnFrequencySeconds: 3
+    numGatesToSpawn: 1
+    gateSpawnFrequencySeconds: 2.5
+    scoreRangeMin: 0
+  - numDronesToSpawn: 20
+    droneSpawnFrequencySeconds: 2.5
+    numGatesToSpawn: 1
+    gateSpawnFrequencySeconds: 2.2
+    scoreRangeMin: 1000000
+  - numDronesToSpawn: 20
+    droneSpawnFrequencySeconds: 2
+    numGatesToSpawn: 1
+    gateSpawnFrequencySeconds: 2
+    scoreRangeMin: 5000000
   gameStartSound: {fileID: 8300000, guid: e7728dcea3dfb43828c7e9600fc44b6f, type: 3}
   gameOverSound: {fileID: 8300000, guid: 4574879063e0d462bad41e7482e1909d, type: 3}
+  droneManager: {fileID: 1124517529}
+  gateManager: {fileID: 1641720780}
+  playerPrefab: {fileID: 387052258234922331, guid: 81334230ff1d141578743b61d4025d15,
+    type: 3}
   Bounds: {fileID: 1749389352}
-  bounds: {x: 0, y: 0, z: 0}
 --- !u!4 &368187414
 Transform:
   m_ObjectHideFlags: 0
@@ -1129,8 +1145,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  spawnAmt: 15
-  spawnDelay: 3
+  SpawnAmount: 15
+  SpawnDelay: 3
   spawnSound: {fileID: 8300000, guid: 3de9884603c50417697d8d92e17eddde, type: 3}
   _shouldSpawn: 1
 --- !u!4 &1124517530
@@ -1490,6 +1506,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dependentScripts:
   - {fileID: 368187413}
+  - {fileID: 1124517529}
+  - {fileID: 1641720780}
+  - {fileID: 508182109}
   scriptDependencies:
     list:
     - list:
@@ -1499,6 +1518,12 @@ MonoBehaviour:
       - {fileID: 1393558488}
       - {fileID: 309345036}
       - {fileID: 1234765200}
+    - list:
+      - {fileID: 1393558488}
+    - list:
+      - {fileID: 1393558488}
+    - list:
+      - {fileID: 1393558488}
   verbose: 0
 --- !u!1 &1368330561
 GameObject:
@@ -1606,7 +1631,7 @@ MonoBehaviour:
     prefab: {fileID: 5725811411546682214, guid: 6ca9fddd0c236472da7c4d13c146aea2,
       type: 3}
     spriteManager: {fileID: 1124517529}
-    size: 200
+    size: 300
   - tag: Gate
     prefab: {fileID: 4245910139787302849, guid: cc53953723f0e44a0b82b38dfbbc572f,
       type: 3}
@@ -1616,7 +1641,7 @@ MonoBehaviour:
     prefab: {fileID: 5171368013101464017, guid: 53c79bc4f907b43a3998ba9f32ff3add,
       type: 3}
     spriteManager: {fileID: 508182109}
-    size: 200
+    size: 600
 --- !u!4 &1393558489
 Transform:
   m_ObjectHideFlags: 0
@@ -1675,8 +1700,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  spawnAmt: 1
-  spawnDelay: 2.5
+  SpawnAmount: 15
+  SpawnDelay: 3
   spawnSound: {fileID: 0}
   _shouldSpawn: 1
 --- !u!1 &1722426890

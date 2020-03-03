@@ -93,6 +93,10 @@ public class Multiplier : MonoBehaviour, IPooledObject
     void Drift() {
         transform.position += driftSpeed * driftDirection * Time.deltaTime;
     }
+
+    public void Bounce() {
+        driftDirection *= -1;
+    }
     
     public void OnObjectSpawn() {
         driftDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);

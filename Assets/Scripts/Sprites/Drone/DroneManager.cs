@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DroneManager : PeriodicSpawningSpriteManager
-{   
+{  
     private enum Corner {
         TOPLEFT = 0,
         TOPRIGHT = 1,
@@ -19,10 +19,10 @@ public class DroneManager : PeriodicSpawningSpriteManager
     public override void InitSpawnLocations() {
         base.InitSpawnLocations();
         spawnLocations = new float[4,4] {
-            {minX, -gameManager.bounds.x / 2, gameManager.bounds.y / 2, maxY}, //top left sixteenth quadrant
-            {gameManager.bounds.x / 2, maxX, gameManager.bounds.y / 2, maxY}, //top right
-            {minX, -gameManager.bounds.x / 2, minY, -gameManager.bounds.y / 2}, //bot left
-            {gameManager.bounds.x / 2, maxX, minY, -gameManager.bounds.y / 2} //bot right
+            {minX, -gameManager.GameBounds.x / 2, gameManager.GameBounds.y / 2, maxY}, //top left sixteenth quadrant
+            {gameManager.GameBounds.x / 2, maxX, gameManager.GameBounds.y / 2, maxY}, //top right
+            {minX, -gameManager.GameBounds.x / 2, minY, -gameManager.GameBounds.y / 2}, //bot left
+            {gameManager.GameBounds.x / 2, maxX, minY, -gameManager.GameBounds.y / 2} //bot right
         };
     }
 
@@ -36,7 +36,7 @@ public class DroneManager : PeriodicSpawningSpriteManager
             
             PlaySpawnSound();
             float padding = 0.5f; //make sure drone doesn't spawn at edge
-            for (int i = 0; i < spawnAmt; i++) {
+            for (int i = 0; i < SpawnAmount; i++) {
                 Vector2 spawnLoc = new Vector2(Random.Range(spawnLocations[spawnIdx, 0] + padding, spawnLocations[spawnIdx, 1] - padding), Random.Range(spawnLocations[spawnIdx, 2] + padding, spawnLocations[spawnIdx, 3] - padding));
                 
                 GameObject droneObj = objectPooler.SpawnFromPool("Drone", spawnLoc, Quaternion.identity);
@@ -63,7 +63,7 @@ public class DroneManager : PeriodicSpawningSpriteManager
     }
 
     void OnDroneDeath(Drone drone) {
-        gameManager.scoreManager.UpdateScoreWithEvent("droneDeath");
+        scoreManager.UpdateScoreWithEvent("droneDeath");
     }
 
     public override void OnGameOver(GameManager gm) {

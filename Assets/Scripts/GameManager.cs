@@ -15,6 +15,22 @@ public enum GameState {
     STARTING,
 }
 
+[Serializable]
+public class GameDifficulty {
+    public int numDronesToSpawn;
+    public float droneSpawnFrequencySeconds; 
+    public int numGatesToSpawn;
+    public float gateSpawnFrequencySeconds;
+    public int scoreRangeMin;
+
+    public GameDifficulty(int nDronesToSpawn, float droneSpawnFreqSeconds, int nGatesToSpawn, float gateSpawnFreqSeconds) {
+        this.numDronesToSpawn = nDronesToSpawn;
+        this.droneSpawnFrequencySeconds = droneSpawnFreqSeconds;
+        this.numDronesToSpawn = nGatesToSpawn;
+        this.gateSpawnFrequencySeconds = gateSpawnFreqSeconds;
+    }
+}
+
 public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
 {
     #region Singleton
@@ -25,6 +41,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     }
     #endregion
 
+    #region GameState
     private GameState _currGameState;
     public GameState CurrGameState
     {
@@ -55,16 +72,36 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     public event Action<GameState, GameState> OnGameStateChange;
     public event Action<GameManager> OnGameStart;
     public event Action<GameManager> OnGameOver;
+    #endregion
     public float GAME_OVER_DELAY = 1.5f;
 
-    public ScoreManager scoreManager;
-    public GameObject playerPrefab;
+    [SerializeField]
+    GameDifficulty[] gameDifficultyLevels;
+    int _currGameDifficultyIdx;
+    public int CurrGameDifficultyIdx {
+        get {
+            return _currGameDifficultyIdx;
+        }
+        set {
+            this._currGameDifficultyIdx = value;
+            //this should change the game difficulty
+            SetGameDifficultyTo(gameDifficultyLevels[this._currGameDifficultyIdx]);
+        }
+    }
+
     [SerializeField]
     private AudioClip gameStartSound;
     [SerializeField]
     private AudioClip gameOverSound;
-
     private AudioSource audioSource;
+
+    ScoreManager scoreManager;
+    [SerializeField]
+    DroneManager droneManager;
+    [SerializeField]
+    GateManager gateManager;
+
+    public GameObject playerPrefab;
     private Player player;
     public event Action<Player> OnNewPlayer;
 
@@ -74,26 +111,44 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         The game bounds go from top left: -bounds.x, -bounds.y 
             -> bot right: +bounds.x, +bounds.y
     */
-    public Vector3 bounds;
+    public Vector3 GameBounds {
+        get {
+            return Bounds.GetComponent<SpriteRenderer>().bounds.extents;
+        }
+    }
 
+    #region ILoadableScript
     public event Action<ILoadableScript> OnScriptInitialized;
     bool _isInitialized = false;
-    public bool IsInitialized () {
-        return this._isInitialized;
+    bool isInitialized {
+        get {
+            return this._isInitialized;
+        }
+        set {
+            this._isInitialized = value;
+            if (this._isInitialized) {
+                OnScriptInitialized?.Invoke(this);
+            }
+        }   
     }
+    public bool IsInitialized () {
+        return isInitialized;
+    }
+    #endregion
 
     // Start is called before the first frame update
     void Start()
     {
+        scoreManager = ScoreManager.Instance;
+        scoreManager.OnScoreChange += OnScoreChange;
+
         audioSource = gameObject.GetComponent<AudioSource>();
-        bounds = Bounds.GetComponent<SpriteRenderer>().bounds.extents;
         
         OnGameStateChange += OnGameStateChangeHandler;
         OnGameStart += OnGameStartHandler;
         OnGameOver += OnGameOverHandler;
 
-        this._isInitialized = true;
-        OnScriptInitialized?.Invoke(this);
+        isInitialized = true;
     }
 
     // Update is called once per frame
@@ -120,6 +175,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
 
     void OnGameStartHandler(GameManager gm) {
         resetPlayer();
+        CurrGameDifficultyIdx = 0;
         audioSource.PlayOneShot(gameStartSound);
         Invoke("playMainTheme", 0.5f);
         CurrGameState = GameState.PLAYING;
@@ -128,6 +184,23 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     void OnGameOverHandler(GameManager gm) {
         audioSource.Stop();
         audioSource.PlayOneShot(gameOverSound);
+    }
+
+    void SetGameDifficultyTo(GameDifficulty gameDifficulty)  {
+        droneManager.SpawnAmount = gameDifficulty.numDronesToSpawn;
+        droneManager.SpawnDelay = gameDifficulty.droneSpawnFrequencySeconds;
+        gateManager.SpawnAmount = gameDifficulty.numGatesToSpawn;
+        gateManager.SpawnDelay = gameDifficulty.gateSpawnFrequencySeconds;
+    }
+
+    void OnScoreChange(ScoreManager sm) {
+        int nextDifficultyIdx = CurrGameDifficultyIdx + 1;
+        if (nextDifficultyIdx < gameDifficultyLevels.Length) {
+            GameDifficulty nextGameDifficulty = gameDifficultyLevels[nextDifficultyIdx];
+            if (sm.Score >= nextGameDifficulty.scoreRangeMin) { 
+                CurrGameDifficultyIdx = nextDifficultyIdx;
+            }
+        }
     }
 
     public void RestartGame() {

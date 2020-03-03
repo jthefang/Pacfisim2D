@@ -8,10 +8,8 @@ using UnityEngine;
 */
 public class PeriodicSpawningSpriteManager : SpriteManager
 {
-    [SerializeField]
-    protected int spawnAmt = 15;
-    [SerializeField]
-    protected float spawnDelay = 3.0f;
+    public int SpawnAmount = 15;
+    public float SpawnDelay = 3.0f;
     protected float timeTilSpawn;
     AudioSource audioSource;
     [SerializeField]
@@ -28,8 +26,11 @@ public class PeriodicSpawningSpriteManager : SpriteManager
         }
     }
 
+    protected ScoreManager scoreManager;
+
     public override void InitSpriteManager() {
         audioSource = gameObject.GetComponent<AudioSource>();
+        scoreManager = ScoreManager.Instance;
 
         base.InitSpriteManager();
     }
@@ -63,7 +64,7 @@ public class PeriodicSpawningSpriteManager : SpriteManager
     }
 
     public void ResetSpawnTimer() {
-        timeTilSpawn = spawnDelay;
+        timeTilSpawn = SpawnDelay;
     }
 
     protected void PeriodicSpawn() {

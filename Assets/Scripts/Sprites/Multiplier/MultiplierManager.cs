@@ -21,7 +21,7 @@ public class MultiplierManager : SpriteManager
     public override Vector2 GetSpawnLocPadding() {
         GameObject multiplierObject = objectPooler.GetSpritePrefab(GetSpriteName());
         
-        Vector3 multiplierSize = Util.GetSizeOfSprite(multiplierObject.transform.Find("outer_shell").gameObject); 
+        Vector3 multiplierSize = Util.GetSizeOfSprite(multiplierObject.transform.Find("multiplier_outer_shell").gameObject); 
         return new Vector2(multiplierSize.x / 2, multiplierSize.y / 2);
     }
 
