@@ -6,13 +6,15 @@ using UnityEngine;
 /**
     Ensures we load all script dependencies in the right order
 
-    DependentScripts = List of scripts that depend on other scripts to load first, before they can load
-        must be of type `IDependentScript`
+    DependentScripts = List of lists of scripts that depend on other scripts to load first, before they can load
+        each script must be of type `IDependentScript`
 
     ScriptDependencies = List of lists of scripts that the dependent scripts wait on to load
-        must be of type `ILoadableScript`
+        each script must be of type `ILoadableScript`
 
-    Each IDependentScript in DependentScripts should have a corresponding list of ILoadableScript's in ScriptDepndencies 
+    Each list D of IDependentScript's in DependentScripts should have a corresponding list L of ILoadableScript's in ScriptDependencies 
+        foreach dependentScript in D:
+            dependentScript is dependent on all ILoadableScript's in L
 */
 public class ScriptDependencyManager : MonoBehaviour
 {
@@ -26,7 +28,7 @@ public class ScriptDependencyManager : MonoBehaviour
     #endregion
 
     [SerializeField]
-    List<MonoBehaviour> dependentScripts;
+    List<DependentScripts> dependentScripts;
     [SerializeField]
     ScriptDependencies scriptDependencies;
     [SerializeField]
@@ -58,22 +60,25 @@ public class ScriptDependencyManager : MonoBehaviour
         }
 
         for (int i = 0; i < dependentScripts.Count; i++) {
-            if (!(dependentScripts[i] is IDependentScript)) {
-                Debug.LogError(dependentScripts[i].GetType().Name + " is not an IDependentScript.");
-                continue;
-            }
-            IDependentScript currScript = (IDependentScript) dependentScripts[i];
-            
-            List<ILoadableScript> currScriptDependencies = new List<ILoadableScript>();
-            foreach (MonoBehaviour dependency in scriptDependencies.list[i].list) {
-                if (!(dependency is ILoadableScript)) {
-                    Debug.LogError(dependency.GetType().Name + " is not an ILoadableScript.");
+            List<MonoBehaviour> D = dependentScripts[i].list;
+            for (int j = 0; j < D.Count; j++) {
+                if (!(D[j] is IDependentScript)) {
+                    Debug.LogError(D[j].GetType().Name + " is not an IDependentScript.");
                     continue;
                 }
-                currScriptDependencies.Add((ILoadableScript) dependency);
-            }
+                IDependentScript currScript = (IDependentScript) D[j];
+                
+                List<ILoadableScript> currScriptDependencies = new List<ILoadableScript>();
+                foreach (MonoBehaviour dependency in scriptDependencies.list[i].list) {
+                    if (!(dependency is ILoadableScript)) {
+                        Debug.LogError(dependency.GetType().Name + " is not an ILoadableScript.");
+                        continue;
+                    }
+                    currScriptDependencies.Add((ILoadableScript) dependency);
+                }
 
-            UpdateDependencyDicts(currScript, currScriptDependencies);
+                UpdateDependencyDicts(currScript, currScriptDependencies);
+            }
         }
     }
 
@@ -125,6 +130,11 @@ public class ScriptDependencyManager : MonoBehaviour
             }
         }
     }
+}
+
+[Serializable]
+public class DependentScripts {
+    public List<MonoBehaviour> list;
 }
 
 [Serializable]

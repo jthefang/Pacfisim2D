@@ -1505,23 +1505,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dependentScripts:
-  - {fileID: 368187413}
-  - {fileID: 1124517529}
-  - {fileID: 1641720780}
-  - {fileID: 508182109}
+  - list:
+    - {fileID: 368187413}
+  - list:
+    - {fileID: 1641720780}
+    - {fileID: 1124517529}
+    - {fileID: 508182109}
   scriptDependencies:
     list:
     - list:
       - {fileID: 864700212}
       - {fileID: 1124517529}
       - {fileID: 1641720780}
-      - {fileID: 1393558488}
+      - {fileID: 508182109}
       - {fileID: 309345036}
       - {fileID: 1234765200}
-    - list:
-      - {fileID: 1393558488}
-    - list:
-      - {fileID: 1393558488}
     - list:
       - {fileID: 1393558488}
   verbose: 0
