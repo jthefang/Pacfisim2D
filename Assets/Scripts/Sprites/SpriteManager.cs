@@ -96,7 +96,7 @@ public class SpriteManager : MonoBehaviour, ILoadableScript, IDependentScript
 
     public void DestroyAll() {
         foreach (GameObject sprite in sprites) {
-            sprite.SetActive(false);
+            objectPooler.DeactivateSpriteInPool(sprite);
         }
         sprites = new List<GameObject>();
     }

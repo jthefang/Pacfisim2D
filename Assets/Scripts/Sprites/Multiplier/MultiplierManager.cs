@@ -25,7 +25,7 @@ public class MultiplierManager : SpriteManager
         return new Vector2(multiplierSize.x / 2, multiplierSize.y / 2);
     }
 
-    public GameObject SpawnSprite(Vector2 pos, Quaternion rotation) {
+    GameObject SpawnSprite(Vector2 pos, Quaternion rotation) {
         GameObject multiplierObject = objectPooler.SpawnFromPool("Multiplier", pos, rotation);
         Util.RemoveZRotation(multiplierObject.transform);
 

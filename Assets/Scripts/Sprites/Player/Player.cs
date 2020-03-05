@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField]
+    bool canDie = true; //for play testing (god mode) set this to false
+
     protected GameManager _gameManager;
     public GameManager gameManager {
         get {
@@ -81,6 +84,7 @@ public class Player : MonoBehaviour
     }
 
     public void Die() {
-        gameManager.IsGameOver = true;
+        if (canDie)
+            gameManager.IsGameOver = true;
     }
 }

@@ -355,7 +355,7 @@ MonoBehaviour:
     droneSpawnFrequencySeconds: 2
     numGatesToSpawn: 1
     gateSpawnFrequencySeconds: 2
-    scoreRangeMin: 5000000
+    scoreRangeMin: 10000000
   gameStartSound: {fileID: 8300000, guid: e7728dcea3dfb43828c7e9600fc44b6f, type: 3}
   gameOverSound: {fileID: 8300000, guid: 4574879063e0d462bad41e7482e1909d, type: 3}
   droneManager: {fileID: 1124517529}
@@ -1558,7 +1558,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_LightVolumeOpacity: 0
-  m_ApplyToSortingLayers: 00000000db0a3a158924accb
+  m_ApplyToSortingLayers: 000000008924accb
   m_LightCookieSprite: {fileID: 0}
   m_UseNormalMap: 0
   m_LightOrder: 0
@@ -1639,7 +1639,7 @@ MonoBehaviour:
     prefab: {fileID: 5171368013101464017, guid: 53c79bc4f907b43a3998ba9f32ff3add,
       type: 3}
     spriteManager: {fileID: 508182109}
-    size: 600
+    size: 75
 --- !u!4 &1393558489
 Transform:
   m_ObjectHideFlags: 0

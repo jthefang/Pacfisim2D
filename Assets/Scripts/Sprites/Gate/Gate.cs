@@ -14,16 +14,17 @@ public class Gate : MonoBehaviour, IPooledObject
     public float rotateSpeed;
     public float initialDriftForce;
     public GameObject explosionPrefab;
-    public float blastRadius;
 
     private GameObject explosion;
     SpriteManager spriteManager;
     GameManager gameManager;
+    ObjectPooler objectPooler;
 
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GameManager.Instance;
+        objectPooler = ObjectPooler.Instance;
     }
 
     public void OnObjectInitiate(SpriteManager sm) {
@@ -53,8 +54,6 @@ public class Gate : MonoBehaviour, IPooledObject
 
     public void Explode() {
         explosion = Instantiate(explosionPrefab, this.transform.position, Quaternion.identity);
-        CircleCollider2D circleCollider = explosion.gameObject.GetComponent<CircleCollider2D>();
-        circleCollider.radius = blastRadius;
-        gameObject.SetActive(false);
+        objectPooler.DeactivateSpriteInPool(this.gameObject);
     }
 }

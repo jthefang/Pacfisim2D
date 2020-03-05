@@ -21,7 +21,7 @@ public class GateManager : PeriodicSpawningSpriteManager
         Vector3 gateEndSize = Util.GetSizeOfSprite(gateObject.transform.Find("Right Gate End").gameObject); 
 
         //same in both directions since gate can rotate and x is the long axis
-        return new Vector2(ropeSize.x + gateEndSize.x, ropeSize.x + gateEndSize.x);
+        return new Vector2(ropeSize.x + 2*gateEndSize.x, ropeSize.x + 2*gateEndSize.x);
     }
 
     public override void SpawnSprites() {

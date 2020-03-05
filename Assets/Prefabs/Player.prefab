@@ -129,6 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e087deacb4aa4664a4863c490e57d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canDie: 1
   hitSound: {fileID: 8300000, guid: 12b4cff65aab741ddad8bff77e3d4a93, type: 3}
 --- !u!50 &3292715909755327250
 Rigidbody2D:
@@ -5199,7 +5200,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5455795577354040979
 Transform:
   m_ObjectHideFlags: 0
@@ -5209,7 +5210,7 @@ Transform:
   m_GameObject: {fileID: 8850179959895356049}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1}
   m_Children: []
   m_Father: {fileID: 7382660702766430628}
   m_RootOrder: 0
@@ -5226,14 +5227,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_LightType: 3
+  m_LightType: 2
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.68
   m_Color: {r: 0.21960786, g: 0.76470596, b: 0.6313726, a: 1}
   m_Intensity: 1
-  m_LightVolumeOpacity: 0
-  m_ApplyToSortingLayers: 8924accb
-  m_LightCookieSprite: {fileID: 0}
+  m_LightVolumeOpacity: 0.34
+  m_ApplyToSortingLayers: 00000000db0a3a158924accb
+  m_LightCookieSprite: {fileID: 21300000, guid: a82294f7f3d264e44bdbf7476eeed3c7,
+    type: 3}
   m_UseNormalMap: 0
   m_LightOrder: 0
   m_AlphaBlendOnOverlap: 0

@@ -21,20 +21,22 @@ public class Multiplier : MonoBehaviour, IPooledObject
     float driftSpeed = 0.1f; //should be really small
 
     ScoreManager scoreManager;
+    ObjectPooler objectPooler;
     SpriteManager spriteManager;
     GameManager gameManager;
 
-    AudioSource audioSource;
+    /*AudioSource audioSource;
     [SerializeField]
-    AudioClip pickupMultiplierSound;
+    AudioClip pickupMultiplierSound;*/
 
     // Start is called before the first frame update
     void Start()
     {
         shouldGravitate = false;
         scoreManager = ScoreManager.Instance;
+        objectPooler = ObjectPooler.Instance;
         gameManager = GameManager.Instance;
-        audioSource = GetComponent<AudioSource>();
+        //audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -61,17 +63,21 @@ public class Multiplier : MonoBehaviour, IPooledObject
 
     }
 
+    public static void TriggerCollect(int numTimes) {
+        ScoreManager.Instance.ScoreMultiplier += 1 * numTimes;
+    }
+
     /**
         This multiplier is collected by player
     */
     public void Collect(Player player) {
-        audioSource.PlayOneShot(pickupMultiplierSound);
-        scoreManager.ScoreMultiplier += 1;
+        //audioSource.PlayOneShot(pickupMultiplierSound);
+        TriggerCollect(1);
         Die();
     }
 
     void Die() {
-        gameObject.SetActive(false);
+        objectPooler.DeactivateSpriteInPool(this.gameObject);
         shouldGravitate = false;
     }
 

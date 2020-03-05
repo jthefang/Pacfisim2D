@@ -12,6 +12,16 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
         public GameObject prefab;
         public SpriteManager spriteManager;
         public int size; //at this point we'll start reusing objects instead of instantiating new ones
+
+        int _numActive = 0;
+        public int NumActive {
+            get {
+                return this._numActive;
+            }
+            set {
+                this._numActive = value;
+            }
+        }
     }
 
     #region Singleton
@@ -24,8 +34,9 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
     #endregion
 
     public List<Pool> pools;
-    Dictionary<string, Pool> poolObjectDictionary;
-    public Dictionary<string, Queue<GameObject>> poolDictionary; 
+    Dictionary<string, Pool> tagToPoolObjectDictionary;
+    Dictionary<GameObject, string> objectToTagDictionary;
+    public Dictionary<string, Queue<GameObject>> tagToPoolQueueDictionary; 
     public event Action<ILoadableScript> OnScriptInitialized;
     bool _isInitialized = false;
     public bool IsInitialized () {
@@ -33,11 +44,12 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
     }
 
     void Start() {
-        poolObjectDictionary = new Dictionary<string, Pool>();
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();  
+        tagToPoolObjectDictionary = new Dictionary<string, Pool>();
+        objectToTagDictionary = new Dictionary<GameObject, string>();
+        tagToPoolQueueDictionary = new Dictionary<string, Queue<GameObject>>();  
 
         foreach (Pool pool in pools)  {
-            poolObjectDictionary[pool.tag] = pool;
+            tagToPoolObjectDictionary[pool.tag] = pool;
 
             // create a Q for each pool
             Queue<GameObject> objectPool = new Queue<GameObject>();
@@ -51,9 +63,10 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
                     pooledObj.OnObjectInitiate(pool.spriteManager);
                 }
                 objectPool.Enqueue(obj);
+                objectToTagDictionary[obj] = pool.tag;
             }
 
-            poolDictionary.Add(pool.tag, objectPool);
+            tagToPoolQueueDictionary.Add(pool.tag, objectPool);
         }
 
         this._isInitialized = true;
@@ -61,13 +74,16 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
     }
 
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation) {
-        if (!poolDictionary.ContainsKey(tag)) {
+        if (!tagToPoolQueueDictionary.ContainsKey(tag)) {
             Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
             return null;
         }
 
-        GameObject objectToSpawn = poolDictionary[tag].Dequeue();
+        GameObject objectToSpawn = tagToPoolQueueDictionary[tag].Dequeue();
 
+        if (!objectToSpawn.activeSelf) { //else we're reusing already active object (i.e. reached max)
+            tagToPoolObjectDictionary[tag].NumActive += 1;
+        }
         objectToSpawn.SetActive(true);
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
@@ -77,12 +93,31 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
             pooledObj.OnObjectSpawn();
         }
 
-        poolDictionary[tag].Enqueue(objectToSpawn); //if we reach our max number of objects, reuse this guy
+        tagToPoolQueueDictionary[tag].Enqueue(objectToSpawn); //if we reach our max number of objects, reuse this guy
         return objectToSpawn;
     }
 
     public GameObject GetSpritePrefab(string tag) {
-        return poolObjectDictionary[tag].prefab;
+        return tagToPoolObjectDictionary[tag].prefab;
+    }
+
+    /**
+        Deactivate/kills a sprite spawned from a pool maintained by this object pooler
+    */
+    public void DeactivateSpriteInPool(GameObject spriteObject) {
+        if (!objectToTagDictionary.ContainsKey(spriteObject)) {
+            Debug.LogError("Trying to deactivate a sprite game object that does not belong to this object pooler.");
+            return;
+        }
+
+        spriteObject.SetActive(false);
+        string spriteTag = objectToTagDictionary[spriteObject];
+        tagToPoolObjectDictionary[spriteTag].NumActive -= 1;
+    }
+
+    public bool AllObjectsActiveForPool(string poolTag) {
+        Pool p = tagToPoolObjectDictionary[poolTag];
+        return p.NumActive >= p.size;
     }
 
 }
