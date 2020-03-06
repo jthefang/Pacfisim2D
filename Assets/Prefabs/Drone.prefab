@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 5725811411546682209}
   - component: {fileID: 5725811411546682208}
   - component: {fileID: 5725811411546682215}
-  - component: {fileID: 5725811411546682210}
   - component: {fileID: -4565884708947823170}
+  - component: {fileID: 5573463783121143202}
   m_Layer: 8
   m_Name: Drone
   m_TagString: Drone
@@ -100,47 +100,6 @@ MonoBehaviour:
   speed: 6
   numMultipliersOnDeath: 2
   multiplierSpawnRadius: 2
---- !u!60 &5725811411546682210
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5725811411546682214}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.22241545, y: -0.12191963}
-      - {x: 0.30787277, y: -0.5}
-      - {x: 0.4267764, y: -0.49943256}
-      - {x: 0.49459887, y: -0.19154215}
-      - {x: 0.49035454, y: 0.24305868}
-      - {x: 0.41627836, y: 0.49459887}
-      - {x: 0.28838682, y: 0.49517727}
-      - {x: 0.21508408, y: 0.12866592}
-      - {x: -0.21464252, y: 0.12041235}
-      - {x: -0.2928877, y: 0.4882884}
-      - {x: -0.415895, y: 0.5}
-      - {x: -0.49459887, y: 0.23823595}
-      - {x: -0.48919773, y: -0.25328255}
-      - {x: -0.4050932, y: -0.48919773}
-      - {x: -0.30227613, y: -0.48919773}
-      - {x: -0.2042818, y: -0.11844158}
 --- !u!50 &-4565884708947823170
 Rigidbody2D:
   serializedVersion: 4
@@ -162,3 +121,29 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!61 &5573463783121143202
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5725811411546682214}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0

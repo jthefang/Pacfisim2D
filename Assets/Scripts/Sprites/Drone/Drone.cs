@@ -26,7 +26,7 @@ public class Drone : MonoBehaviour, IPooledObject
         objectPooler = ObjectPooler.Instance;
         multiplierManager = MultiplierManager.Instance;
         gameManager = GameManager.Instance;
-        collider = GetComponent<Collider2D>();
+        collider = GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -54,22 +54,11 @@ public class Drone : MonoBehaviour, IPooledObject
     }
 
     void Die() {
-        collider.enabled = false;
-
-        StartCoroutine(HideDroneAndSpawnMultipliers());
-
-        OnDroneDeath?.Invoke(this);
-        collider.enabled = true;
-    }
-
-    /**
-        This is to help with performance. There's only so many multipliers we want to be spawning at a single time (especially if a huge horde of drones die at once), else the frame rate drops considerably. We just assume any extra multipliers that need to spawn will be automatically collected by the player.
-    */
-    IEnumerator HideDroneAndSpawnMultipliers() {
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0, 0.01f));
-
         objectPooler.DeactivateSpriteInPool(this.gameObject);
 
+        /**
+            This is to help with performance. There's only so many multipliers we want to be spawning at a single time (especially if a huge horde of drones die at once), else the frame rate drops considerably. We just assume any extra multipliers that need to spawn will be automatically collected by the player.
+        */
         if (objectPooler.AllObjectsActiveForPool("Multiplier")) { 
             Multiplier.TriggerCollect(numMultipliersOnDeath);
         } else {
@@ -77,6 +66,8 @@ public class Drone : MonoBehaviour, IPooledObject
                 multiplierManager.SpawnSpriteAround(this.transform.position, multiplierSpawnRadius);
             }
         }
+
+        OnDroneDeath?.Invoke(this);
     }
 
     void LookAtPlayer() {
