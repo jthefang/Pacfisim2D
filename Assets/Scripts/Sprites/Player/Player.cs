@@ -74,13 +74,32 @@ public class Player : MonoBehaviour
     }
 
     void CollidedWithGateEnd(Gate gate) {
+        HighlightGateEnd(gate);
+        gate.DisableExplosion();
         audioSource.PlayOneShot(hitSound);
         Die();
     }
 
     void CollidedWithDrone(Drone drone) {
+        HighlightDrone(drone);
         audioSource.PlayOneShot(hitSound);
         Die();
+    }
+
+    void HighlightDrone(Drone drone) {
+        drone.transform.Find("inner_polygon").GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
+    void HighlightGateEnd(Gate gate) {
+        GameObject leftGate = gate.LeftGateEnd();
+        GameObject rightGate = gate.RightGateEnd();
+        float distToLeftGate = Vector2.Distance(leftGate.transform.position, transform.position);
+        float distToRightGate = Vector2.Distance(rightGate.transform.position, transform.position);
+        if (distToLeftGate < distToRightGate) { //highlight whichever gate is closest to player
+            leftGate.GetComponent<SpriteRenderer>().color = Color.white;
+        } else {
+            rightGate.GetComponent<SpriteRenderer>().color = Color.white;
+        }
     }
 
     public void Die() {

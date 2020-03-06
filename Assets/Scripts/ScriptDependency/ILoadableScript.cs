@@ -58,5 +58,9 @@ public interface ILoadableScript {
             public void OnAllDependenciesLoaded() {
                 propulsionLoaded = true;
             }
+            ...
+        }
+
+        OR use the Unity editor (preferred)
     */
 }

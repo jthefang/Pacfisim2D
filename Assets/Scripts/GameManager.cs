@@ -72,6 +72,8 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     public event Action<GameState, GameState> OnGameStateChange;
     public event Action<GameManager> OnGameStart;
     public event Action<GameManager> OnGameOver;
+    public event Action<GameManager> OnGamePause;
+    public event Action<GameManager> OnGameResume;
     #endregion
     public float GAME_OVER_DELAY = 1.5f;
 
@@ -147,14 +149,22 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         OnGameStateChange += OnGameStateChangeHandler;
         OnGameStart += OnGameStartHandler;
         OnGameOver += OnGameOverHandler;
+        OnGamePause += OnGamePauseHandler;
+        OnGameResume += OnGameResumeHandler;
 
         isInitialized = true;
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (CurrGameState == GameState.PLAYING) {
+                CurrGameState = GameState.PAUSED;
+            } else if (CurrGameState == GameState.PAUSED) {
+                CurrGameState = GameState.PLAYING;
+            }
+        }
     }
 
     public void OnAllDependenciesLoaded() {
@@ -169,6 +179,12 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
                 OnGameStart?.Invoke(this);
             } else if (newGameState == GameState.STOPPED) {
                 OnGameOver?.Invoke(this);
+            } else if (newGameState == GameState.PAUSED) {
+                OnGamePause?.Invoke(this);
+            } else if (newGameState == GameState.PLAYING) {
+                if (prevGameState == GameState.PAUSED) {
+                    OnGameResume?.Invoke(this);
+                }
             }
         } 
     }
@@ -184,6 +200,14 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     void OnGameOverHandler(GameManager gm) {
         audioSource.Stop();
         audioSource.PlayOneShot(gameOverSound);
+    }
+
+    void OnGamePauseHandler(GameManager gm) {
+        audioSource.Pause();
+    }
+
+    void OnGameResumeHandler(GameManager gm) {
+        audioSource.Play();
     }
 
     void SetGameDifficultyTo(GameDifficulty gameDifficulty)  {

@@ -12,6 +12,13 @@ public class DroneManager : PeriodicSpawningSpriteManager
     };
     private float[,] spawnLocations;
 
+    public override Vector2 GetSpawnLocPadding() {
+        GameObject droneObject = objectPooler.GetSpritePrefab(GetSpriteName());
+        Vector3 droneSize = Util.GetSizeOfSprite(droneObject.transform.Find("outer_polygon").gameObject); 
+        
+        return new Vector2(droneSize.x, droneSize.y);
+    }
+
     /**
         Can spawn in (top/bot, left/right), determined by the bounds
             Each spawn corner is 1/4 of the width and height of the bounds

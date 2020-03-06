@@ -20,6 +20,11 @@ public class Gate : MonoBehaviour, IPooledObject
     GameManager gameManager;
     ObjectPooler objectPooler;
 
+    bool canExplode;
+    Color initialColor;
+    SpriteRenderer leftGateEndRenderer;
+    SpriteRenderer rightGateEndRenderer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +35,10 @@ public class Gate : MonoBehaviour, IPooledObject
     public void OnObjectInitiate(SpriteManager sm) {
         spriteManager = sm;
         this.transform.SetParent(sm.transform);
+        
+        leftGateEndRenderer = LeftGateEnd().GetComponent<SpriteRenderer>();
+        rightGateEndRenderer = RightGateEnd().GetComponent<SpriteRenderer>();
+        initialColor = leftGateEndRenderer.color;
     }
 
     public void OnObjectSpawn() {
@@ -38,6 +47,9 @@ public class Gate : MonoBehaviour, IPooledObject
         initialDriftForce = Random.Range(driftForceRange.x, driftForceRange.y);
         driftDirection = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0).normalized;
         gameObject.GetComponent<Rigidbody2D>().AddForce(driftDirection * initialDriftForce);
+        
+        canExplode = true;
+        ResetGateEndColors();
     }
 
     // Update is called once per frame
@@ -52,8 +64,27 @@ public class Gate : MonoBehaviour, IPooledObject
         transform.RotateAround(transform.position, Vector3.forward, rotateSpeed * Time.deltaTime);
     }   
 
+    public GameObject LeftGateEnd() {
+        return transform.Find("Left Gate End").gameObject;
+    }
+
+    public GameObject RightGateEnd() {
+        return transform.Find("Right Gate End").gameObject;
+    }
+
+    void ResetGateEndColors() {
+        leftGateEndRenderer.color = initialColor;
+        rightGateEndRenderer.color = initialColor;
+    }
+
+    public void DisableExplosion() {
+        canExplode = false;
+    }
+
     public void Explode() {
-        explosion = Instantiate(explosionPrefab, this.transform.position, Quaternion.identity);
-        objectPooler.DeactivateSpriteInPool(this.gameObject);
+        if (canExplode) {
+            explosion = Instantiate(explosionPrefab, this.transform.position, Quaternion.identity);
+            objectPooler.DeactivateSpriteInPool(this.gameObject);
+        }
     }
 }

@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour, ILoadableScript
+public class UIManager : MonoBehaviour, ILoadableScript, IDependentScript
 {
     [SerializeField]
     private GameManager gameManager;
@@ -13,33 +13,60 @@ public class UIManager : MonoBehaviour, ILoadableScript
     Text scoreIntText;
     [SerializeField]
     Text scoreMultiplierIntText;
+    [SerializeField]
+    ActivatablePanel pauseMenuPanel;
 
     ScoreManager scoreManager;
 
+    #region ILoadableScript
     public event Action<ILoadableScript> OnScriptInitialized;
     bool _isInitialized = false;
-    public bool IsInitialized () {
-        return this._isInitialized;
+    bool isInitialized {
+        get {
+            return this._isInitialized;
+        }
+        set {
+            this._isInitialized = value;
+            if (this._isInitialized) {
+                OnScriptInitialized?.Invoke(this);
+            }
+        }   
     }
+    public bool IsInitialized () {
+        return isInitialized;
+    }
+    #endregion
 
     // Start is called before the first frame update
     void Start()
     {
-        ToggleGameOverPanel(false);
         gameManager.OnGameStart += OnGameStart;
         gameManager.OnGameOver += OnGameOver;
+        gameManager.OnGamePause += OnGamePause;
+        gameManager.OnGameResume += OnGameResume;
         scoreManager = ScoreManager.Instance;
         scoreManager.OnScoreChange += OnScoreChange;
         scoreManager.OnScoreMultiplierChange += OnScoreMultiplierChange;
+    }
 
-        _isInitialized = true;
-        OnScriptInitialized?.Invoke(this);
+    public void OnAllDependenciesLoaded() {
+        ToggleGameOverPanel(false);
+        pauseMenuPanel.ToggleActive(false);
+        isInitialized = true;
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {   
-        
+
+    }
+
+    void OnGamePause(GameManager gm) {
+        pauseMenuPanel.ToggleActive(true);
+    }
+
+    void OnGameResume(GameManager gm) {
+        pauseMenuPanel.ToggleActive(false);
     }
 
     void OnGameStart(GameManager gm) {

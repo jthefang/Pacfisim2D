@@ -20,6 +20,9 @@ public class Drone : MonoBehaviour, IPooledObject
     public event Action<Drone> OnDroneDeath;
     protected ObjectPooler objectPooler;
 
+    Color initialColor;
+    SpriteRenderer bodyRenderer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,10 +44,14 @@ public class Drone : MonoBehaviour, IPooledObject
     public void OnObjectInitiate(SpriteManager sm) {
         spriteManager = sm;
         this.transform.SetParent(sm.transform);
+
+        bodyRenderer = BodyObject().GetComponent<SpriteRenderer>();
+        initialColor = bodyRenderer.color;
     }
 
     public void OnObjectSpawn()  {
         this.targetTransform = spriteManager.player.gameObject.transform;
+        bodyRenderer.color = initialColor;
     }
 
     void OnTriggerEnter2D(Collider2D other) {
@@ -78,5 +85,9 @@ public class Drone : MonoBehaviour, IPooledObject
         if (targetTransform != null) {
             this.transform.position = Vector3.MoveTowards(this.transform.position, 				targetTransform.transform.position, Time.deltaTime * speed); //follow the player
         }
+    }
+
+    public GameObject BodyObject() {
+        return transform.Find("inner_polygon").gameObject;
     }
 }

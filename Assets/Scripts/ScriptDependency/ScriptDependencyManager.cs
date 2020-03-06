@@ -105,6 +105,10 @@ public class ScriptDependencyManager : MonoBehaviour
                     newDependentScripts.Add(newDependentScript);
                     reverseDependencyDict[currDependency] = newDependentScripts; 
                 }
+
+                if (verbose) {
+                    Debug.Log(newDependentScript.GetType().Name + " has dependency " + currDependency.GetType().Name);
+                }
             } else if (verbose) {
                 Debug.Log(currDependency.GetType().Name + " is already loaded for dependent " + newDependentScript.GetType().Name);
             }
