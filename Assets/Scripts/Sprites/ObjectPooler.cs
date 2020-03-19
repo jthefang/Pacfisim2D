@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-
 public class ObjectPooler : MonoBehaviour, ILoadableScript {
 
     [System.Serializable] // for this to show up in the inspector

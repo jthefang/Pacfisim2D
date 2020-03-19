@@ -19,6 +19,7 @@ public class Gate : MonoBehaviour, IPooledObject
     SpriteManager spriteManager;
     GameManager gameManager;
     ObjectPooler objectPooler;
+    GameSettings gameSettings;
 
     bool canExplode;
     Color initialColor;
@@ -30,14 +31,21 @@ public class Gate : MonoBehaviour, IPooledObject
     {
         gameManager = GameManager.Instance;
         objectPooler = ObjectPooler.Instance;
+        gameSettings = GameSettings.Instance;
     }
 
     public void OnObjectInitiate(SpriteManager sm) {
         spriteManager = sm;
         this.transform.SetParent(sm.transform);
         
-        leftGateEndRenderer = LeftGateEnd().GetComponent<SpriteRenderer>();
-        rightGateEndRenderer = RightGateEnd().GetComponent<SpriteRenderer>();
+        GameObject leftGateEnd = LeftGateEnd();
+        GameObject rightGateEnd = RightGateEnd();
+        float gateEndSize = GameSettings.Instance.CurrGameDifficulty.relativeGateEndSize;
+        leftGateEnd.transform.localScale = new Vector3(gateEndSize, gateEndSize, 1);
+        rightGateEnd.transform.localScale = new Vector3(gateEndSize, gateEndSize, 1);
+
+        leftGateEndRenderer = leftGateEnd.GetComponent<SpriteRenderer>();
+        rightGateEndRenderer = rightGateEnd.GetComponent<SpriteRenderer>();
         initialColor = leftGateEndRenderer.color;
     }
 

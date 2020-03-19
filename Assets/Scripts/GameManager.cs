@@ -16,14 +16,14 @@ public enum GameState {
 }
 
 [Serializable]
-public class GameDifficulty {
+public class GameSpeed {
     public int numDronesToSpawn;
     public float droneSpawnFrequencySeconds; 
     public int numGatesToSpawn;
     public float gateSpawnFrequencySeconds;
     public int scoreRangeMin;
 
-    public GameDifficulty(int nDronesToSpawn, float droneSpawnFreqSeconds, int nGatesToSpawn, float gateSpawnFreqSeconds) {
+    public GameSpeed(int nDronesToSpawn, float droneSpawnFreqSeconds, int nGatesToSpawn, float gateSpawnFreqSeconds) {
         this.numDronesToSpawn = nDronesToSpawn;
         this.droneSpawnFrequencySeconds = droneSpawnFreqSeconds;
         this.numDronesToSpawn = nGatesToSpawn;
@@ -51,8 +51,9 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
 
         set {  
             GameState prevGameState = this._currGameState;
-            this._currGameState = value;     
-            OnGameStateChange?.Invoke(prevGameState, value);
+            this._currGameState = value;   
+            if (prevGameState != value)   
+                OnGameStateChange?.Invoke(prevGameState, value);
         }
     }
     public bool IsPlaying {
@@ -77,19 +78,25 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     #endregion
     public float GAME_OVER_DELAY = 1.5f;
 
+    #region GameSpeed
     [SerializeField]
-    GameDifficulty[] gameDifficultyLevels;
-    int _currGameDifficultyIdx;
-    public int CurrGameDifficultyIdx {
+    GameSpeed[] gameSpeedLevels;
+    int _currGameSpeedIdx;
+    public int CurrGameSpeedIdx {
         get {
-            return _currGameDifficultyIdx;
+            return _currGameSpeedIdx;
         }
         set {
-            this._currGameDifficultyIdx = value;
-            //this should change the game difficulty
-            SetGameDifficultyTo(gameDifficultyLevels[this._currGameDifficultyIdx]);
+            this._currGameSpeedIdx = value;
+            //this should change the game speed
+            SetGameSpeedTo(gameSpeedLevels[this._currGameSpeedIdx]);
         }
     }
+    #endregion
+
+    #region GameSettings
+    GameSettings gameSettings;
+    #endregion
 
     [SerializeField]
     private AudioClip gameStartSound;
@@ -98,6 +105,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     private AudioSource audioSource;
 
     ScoreManager scoreManager;
+    ObjectPooler objectPooler;
     [SerializeField]
     DroneManager droneManager;
     [SerializeField]
@@ -141,8 +149,11 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     // Start is called before the first frame update
     void Start()
     {
+        objectPooler = ObjectPooler.Instance;
         scoreManager = ScoreManager.Instance;
         scoreManager.OnScoreChange += OnScoreChange;
+
+        gameSettings = GameSettings.Instance;
 
         audioSource = gameObject.GetComponent<AudioSource>();
         
@@ -174,24 +185,22 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     }
 
     void OnGameStateChangeHandler(GameState prevGameState, GameState newGameState) {
-        if (prevGameState != newGameState) {
-            if (newGameState == GameState.STARTING) {
-                OnGameStart?.Invoke(this);
-            } else if (newGameState == GameState.STOPPED) {
-                OnGameOver?.Invoke(this);
-            } else if (newGameState == GameState.PAUSED) {
-                OnGamePause?.Invoke(this);
-            } else if (newGameState == GameState.PLAYING) {
-                if (prevGameState == GameState.PAUSED) {
-                    OnGameResume?.Invoke(this);
-                }
+        if (newGameState == GameState.STARTING) {
+            OnGameStart?.Invoke(this);
+        } else if (newGameState == GameState.STOPPED) {
+            OnGameOver?.Invoke(this);
+        } else if (newGameState == GameState.PAUSED) {
+            OnGamePause?.Invoke(this);
+        } else if (newGameState == GameState.PLAYING) {
+            if (prevGameState == GameState.PAUSED) {
+                OnGameResume?.Invoke(this);
             }
-        } 
+        }
     }
 
     void OnGameStartHandler(GameManager gm) {
         resetPlayer();
-        CurrGameDifficultyIdx = 0;
+        CurrGameSpeedIdx = 0;
         audioSource.PlayOneShot(gameStartSound);
         Invoke("playMainTheme", 0.5f);
         CurrGameState = GameState.PLAYING;
@@ -210,19 +219,19 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         audioSource.Play();
     }
 
-    void SetGameDifficultyTo(GameDifficulty gameDifficulty)  {
-        droneManager.SpawnAmount = gameDifficulty.numDronesToSpawn;
-        droneManager.SpawnDelay = gameDifficulty.droneSpawnFrequencySeconds;
-        gateManager.SpawnAmount = gameDifficulty.numGatesToSpawn;
-        gateManager.SpawnDelay = gameDifficulty.gateSpawnFrequencySeconds;
+    void SetGameSpeedTo(GameSpeed gameSpeed)  {
+        droneManager.SpawnAmount = gameSpeed.numDronesToSpawn;
+        droneManager.SpawnDelay = gameSpeed.droneSpawnFrequencySeconds;
+        gateManager.SpawnAmount = gameSpeed.numGatesToSpawn;
+        gateManager.SpawnDelay = gameSpeed.gateSpawnFrequencySeconds;
     }
 
     void OnScoreChange(ScoreManager sm) {
-        int nextDifficultyIdx = CurrGameDifficultyIdx + 1;
-        if (nextDifficultyIdx < gameDifficultyLevels.Length) {
-            GameDifficulty nextGameDifficulty = gameDifficultyLevels[nextDifficultyIdx];
-            if (sm.Score >= nextGameDifficulty.scoreRangeMin) { 
-                CurrGameDifficultyIdx = nextDifficultyIdx;
+        int nextSpeedIdx = CurrGameSpeedIdx + 1;
+        if (nextSpeedIdx < gameSpeedLevels.Length) {
+            GameSpeed nextGameSpeed = gameSpeedLevels[nextSpeedIdx];
+            if (sm.Score >= nextGameSpeed.scoreRangeMin) { 
+                CurrGameSpeedIdx = nextSpeedIdx;
             }
         }
     }
