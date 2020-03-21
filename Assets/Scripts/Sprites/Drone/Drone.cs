@@ -12,6 +12,11 @@ public class Drone : MonoBehaviour, IPooledObject
     [SerializeField]
     float multiplierSpawnRadius = 2.0f;
 
+    [SerializeField]
+    float spawnCooldownTime = 1.0f;
+    float currCooldownTime;
+    bool hasCooledDown;
+
     Collider2D collider;
 
     SpriteManager spriteManager;
@@ -36,8 +41,16 @@ public class Drone : MonoBehaviour, IPooledObject
     void FixedUpdate()
     {
         if (gameManager.IsPlaying) {
-            LookAtPlayer();
-            FollowPlayer();
+            if (hasCooledDown) {
+                LookAtPlayer();
+                FollowPlayer();
+            } else {
+                currCooldownTime -= Time.deltaTime;
+                hasCooledDown = currCooldownTime < 0;
+                if (hasCooledDown) {
+                    ActivateDrone();
+                }
+            }
         }
     }
 
@@ -51,11 +64,28 @@ public class Drone : MonoBehaviour, IPooledObject
 
     public void OnObjectSpawn()  {
         this.targetTransform = spriteManager.player.gameObject.transform;
+        hasCooledDown = false;
+        currCooldownTime = spawnCooldownTime;
         bodyRenderer.color = initialColor;
+        SetBodyTransparency(0.5f);
+    }
+
+    void SetBodyTransparency(float alpha) {
+        var tempColor = bodyRenderer.color;
+        tempColor.a = alpha;
+        bodyRenderer.color = tempColor;
+    }
+
+    public bool HasCooledDown() {
+        return hasCooledDown;
+    }
+
+    void ActivateDrone() {
+        SetBodyTransparency(1.0f);
     }
 
     void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag.Contains("Explosion")) {
+        if (hasCooledDown && other.gameObject.tag.Contains("Explosion")) {
             Die();
         }
     }

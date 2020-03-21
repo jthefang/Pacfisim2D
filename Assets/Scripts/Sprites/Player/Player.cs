@@ -81,9 +81,11 @@ public class Player : MonoBehaviour
     }
 
     void CollidedWithDrone(Drone drone) {
-        HighlightDrone(drone);
-        audioSource.PlayOneShot(hitSound);
-        Die();
+        if (drone.HasCooledDown()) {
+            HighlightDrone(drone);
+            audioSource.PlayOneShot(hitSound);
+            Die();
+        }
     }
 
     void HighlightDrone(Drone drone) {

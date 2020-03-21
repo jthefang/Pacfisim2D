@@ -38,7 +38,7 @@ public class PeriodicSpawningSpriteManager : SpriteManager
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (gameManager.IsPlaying) {
+        if (IsInitialized() && gameManager.IsPlaying) {
             timeTilSpawn -= Time.deltaTime;
             if (timeTilSpawn < 0) {
                 PeriodicSpawn();

@@ -1813,7 +1813,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameDifficulties:
   - relativeGateEndSize: 1
-  - relativeGateEndSize: 0.7
+  - relativeGateEndSize: 0.8
 --- !u!4 &968639402
 Transform:
   m_ObjectHideFlags: 0

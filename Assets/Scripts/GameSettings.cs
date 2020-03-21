@@ -56,7 +56,6 @@ public class GameSettings : MonoBehaviour
     public void SetGameDifficultyFromDropdownOptions(int difficultyLevel) {
         CurrGameDifficulty = gameDifficulties[difficultyLevel];
         currGameDifficultyLevel = (GameDifficultyLevel) difficultyLevel;
-        Debug.Log("Difficulty level: " + difficultyLevel + ", relative gate end size: " + CurrGameDifficulty.relativeGateEndSize);
     }
 
 }
