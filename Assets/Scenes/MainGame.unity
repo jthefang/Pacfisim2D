@@ -1616,7 +1616,7 @@ MonoBehaviour:
       - {fileID: 1393558488}
     - list:
       - {fileID: 741105446}
-  verbose: 1
+  verbose: 0
 --- !u!1 &1368330561
 GameObject:
   m_ObjectHideFlags: 0

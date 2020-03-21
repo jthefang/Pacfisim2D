@@ -68,7 +68,6 @@ public class ObjectPooler : MonoBehaviour, ILoadableScript {
             tagToPoolQueueDictionary.Add(pool.tag, objectPool);
         }
 
-        Debug.Log("----------Object pooler initialized~!");
         this._isInitialized = true;
         OnScriptInitialized?.Invoke(this);
     }
