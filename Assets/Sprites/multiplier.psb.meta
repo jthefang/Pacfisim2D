@@ -61,6 +61,7 @@ ScriptedImporter:
     maxTextureSizeSet: 0
     compressionQualitySet: 0
     textureFormatSet: 0
+    applyGammaDecoding: 0
   spriteImportData:
   - name: 
     originalName: 
@@ -97,7 +98,7 @@ ScriptedImporter:
       y: 4
       width: 32
       height: 9
-    spriteID: da918e4c5156c4b2f9130ea3536037ed
+    spriteID: e310503e5a6514484ba592b901272805
     internalID: 0
     spriteBone: []
     spriteOutline: []
@@ -119,7 +120,7 @@ ScriptedImporter:
       y: 21
       width: 32
       height: 7
-    spriteID: 45d57e2a9659f49f0a7370999eb7fc53
+    spriteID: c632c7a3e141b4eb08f0e1095aacd71c
     internalID: 0
     spriteBone: []
     spriteOutline: []
@@ -130,7 +131,18 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 4, y: 9}
-  platformSettings: []
+  platformSettings:
+  - name: Default
+    overridden: 1
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
   mosaicLayers: 1
   documentPivot: {x: 0, y: 0}
   documentAlignment: 7
@@ -153,14 +165,14 @@ ScriptedImporter:
     spriteName: Ellipse 2
     isGroup: 0
     parentIndex: -1
-    spriteID: da918e4c5156c4b2f9130ea3536037ed
+    spriteID: e310503e5a6514484ba592b901272805
     layerID: 4
     mosaicPosition: {x: 4, y: 4}
   - name: Ellipse 1
     spriteName: Ellipse 1
     isGroup: 0
     parentIndex: -1
-    spriteID: 45d57e2a9659f49f0a7370999eb7fc53
+    spriteID: c632c7a3e141b4eb08f0e1095aacd71c
     layerID: 2
     mosaicPosition: {x: 4, y: 21}
   characterData:
