@@ -18,10 +18,11 @@ public enum GameState {
 [Serializable]
 public class GameSpeed {
     public int numDronesToSpawn;
+    public float droneSpeed;
     public float droneSpawnFrequencySeconds; 
     public int numGatesToSpawn;
     public float gateSpawnFrequencySeconds;
-    public int scoreRangeMin;
+    public int scoreThresholdToActivate; 
 
     public GameSpeed(int nDronesToSpawn, float droneSpawnFreqSeconds, int nGatesToSpawn, float gateSpawnFreqSeconds) {
         this.numDronesToSpawn = nDronesToSpawn;
@@ -230,7 +231,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         int nextSpeedIdx = CurrGameSpeedIdx + 1;
         if (nextSpeedIdx < gameSpeedLevels.Length) {
             GameSpeed nextGameSpeed = gameSpeedLevels[nextSpeedIdx];
-            if (sm.Score >= nextGameSpeed.scoreRangeMin) { 
+            if (sm.Score >= nextGameSpeed.scoreThresholdToActivate) { 
                 CurrGameSpeedIdx = nextSpeedIdx;
             }
         }

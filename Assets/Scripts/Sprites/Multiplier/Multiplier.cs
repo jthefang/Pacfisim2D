@@ -11,6 +11,8 @@ public class Multiplier : MonoBehaviour, IPooledObject
 
     [SerializeField]
     float timeTilInactive = 2.0f;
+    float timeRemainingActive;
+    bool isActive;
 
     Transform gravitateTarget; 
     Vector2 originalPosition;
@@ -43,24 +45,21 @@ public class Multiplier : MonoBehaviour, IPooledObject
     void FixedUpdate()
     {
         if (gameManager.IsPlaying) {
+            if (!isActive) {
+                return;
+            }
+            bool stillActive = UpdateAndCheckTimeActive();
+            if (!stillActive) {
+                Die();
+                return;
+            }
+
             if (shouldGravitate) {
-                currGravitateTime += Time.deltaTime;
-                float t = currGravitateTime / maxGravitateTime;
-                if (currGravitateTime > maxGravitateTime) { //just get on top of the player 
-                    transform.position = gravitateTarget.position;
-                } else {
-                    float newX = Mathf.Lerp(transform.position.x, gravitateTarget.position.x, t);
-                    float newY = Mathf.Lerp(transform.position.y, gravitateTarget.position.y, t);
-                    transform.position = new Vector2(newX, newY);
-                }
+                MoveToPlayer();
             } else {
                 Drift();
             }
         }
-    }
-
-    void FacePlayer() {
-
     }
 
     public static void TriggerCollect(int numTimes) {
@@ -77,8 +76,9 @@ public class Multiplier : MonoBehaviour, IPooledObject
     }
 
     void Die() {
-        objectPooler.DeactivateSpriteInPool(this.gameObject);
         shouldGravitate = false;
+        isActive = false;
+        objectPooler.DeactivateSpriteInPool(this.gameObject);
     }
 
     /**
@@ -89,6 +89,23 @@ public class Multiplier : MonoBehaviour, IPooledObject
         originalPosition = transform.position;
         currGravitateTime = 0.0f;
         shouldGravitate = true;
+    }
+
+    void MoveToPlayer() {
+        currGravitateTime += Time.deltaTime;
+        float t = currGravitateTime / maxGravitateTime;
+        if (currGravitateTime > maxGravitateTime) { //just get on top of the player 
+            transform.position = gravitateTarget.position;
+        } else {
+            float newX = Mathf.Lerp(transform.position.x, gravitateTarget.position.x, t);
+            float newY = Mathf.Lerp(transform.position.y, gravitateTarget.position.y, t);
+            transform.position = new Vector2(newX, newY);
+        }
+    }
+
+    bool UpdateAndCheckTimeActive() {
+        timeRemainingActive -= Time.deltaTime;
+        return timeRemainingActive > 0;
     }
 
     public void OnObjectInitiate(SpriteManager sm) {
@@ -107,7 +124,8 @@ public class Multiplier : MonoBehaviour, IPooledObject
     public void OnObjectSpawn() {
         driftDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
         driftDirection.Normalize();
-        Invoke("Die", timeTilInactive);
+        isActive = true;
+        timeRemainingActive = timeTilInactive;
     }
 
 }

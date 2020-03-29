@@ -343,20 +343,23 @@ MonoBehaviour:
   GAME_OVER_DELAY: 1.5
   gameSpeedLevels:
   - numDronesToSpawn: 15
+    droneSpeed: 6
     droneSpawnFrequencySeconds: 3
     numGatesToSpawn: 1
     gateSpawnFrequencySeconds: 2.8
-    scoreRangeMin: 0
+    scoreThresholdToActivate: 0
   - numDronesToSpawn: 20
+    droneSpeed: 7
     droneSpawnFrequencySeconds: 2.5
     numGatesToSpawn: 1
     gateSpawnFrequencySeconds: 2.4
-    scoreRangeMin: 1000000
+    scoreThresholdToActivate: 0
   - numDronesToSpawn: 20
+    droneSpeed: 8
     droneSpawnFrequencySeconds: 2
     numGatesToSpawn: 1
     gateSpawnFrequencySeconds: 2
-    scoreRangeMin: 20000000
+    scoreThresholdToActivate: 0
   gameStartSound: {fileID: 8300000, guid: e7728dcea3dfb43828c7e9600fc44b6f, type: 3}
   gameOverSound: {fileID: 8300000, guid: 4574879063e0d462bad41e7482e1909d, type: 3}
   droneManager: {fileID: 1124517529}
