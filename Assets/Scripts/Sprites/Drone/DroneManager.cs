@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DroneManager : PeriodicSpawningSpriteManager
 {  
+    public float DroneSpeed;
     private enum Corner {
         TOPLEFT = 0,
         TOPRIGHT = 1,
@@ -11,6 +12,12 @@ public class DroneManager : PeriodicSpawningSpriteManager
         BOTRIGHT = 3
     };
     private float[,] spawnLocations;
+
+    protected override void OnNewGameSpeed(GameSpeed newGameSpeed) {
+        this.SpawnAmount = newGameSpeed.numDronesToSpawn;
+        this.SpawnDelay = newGameSpeed.droneSpawnFrequencySeconds;
+        this.DroneSpeed = newGameSpeed.droneSpeed;
+    }
 
     public override Vector2 GetSpawnLocPadding() {
         GameObject droneObject = objectPooler.GetSpritePrefab(GetSpriteName());

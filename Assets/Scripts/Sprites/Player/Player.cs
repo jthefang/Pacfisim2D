@@ -39,7 +39,8 @@ public class Player : MonoBehaviour
         if (gameManager.IsPlaying) {
             switch (other.gameObject.tag) {
                 case "Drone":
-                    CollidedWithDrone(other.gameObject.GetComponent<Drone>());
+                    if (canDie)
+                        CollidedWithDrone(other.gameObject.GetComponent<Drone>());
                     break;
                 default:
                     break;
@@ -51,7 +52,8 @@ public class Player : MonoBehaviour
         if (gameManager.IsPlaying) {
             switch (other.gameObject.tag) {
                 case "Gate End":
-                    CollidedWithGateEnd(other.gameObject.GetComponent<Gate>());
+                    if (canDie)
+                        CollidedWithGateEnd(other.gameObject.GetComponent<Gate>());
                     break;
                 case "Gate Rope":
                     CollidedWithGateRope(other.gameObject);
@@ -105,7 +107,6 @@ public class Player : MonoBehaviour
     }
 
     public void Die() {
-        if (canDie)
-            gameManager.IsGameOver = true;
+        gameManager.IsGameOver = true;
     }
 }

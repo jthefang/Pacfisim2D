@@ -90,9 +90,10 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         set {
             this._currGameSpeedIdx = value;
             //this should change the game speed
-            SetGameSpeedTo(gameSpeedLevels[this._currGameSpeedIdx]);
+            OnNewGameSpeed?.Invoke(gameSpeedLevels[this._currGameSpeedIdx]);
         }
     }
+    public event Action<GameSpeed> OnNewGameSpeed;
     #endregion
 
     #region GameSettings
@@ -101,10 +102,6 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
 
     ScoreManager scoreManager;
     ObjectPooler objectPooler;
-    [SerializeField]
-    DroneManager droneManager;
-    [SerializeField]
-    GateManager gateManager;
 
     public GameObject playerPrefab;
     private Player player;
@@ -152,9 +149,6 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         
         OnGameStateChange += OnGameStateChangeHandler;
         OnGameStart += OnGameStartHandler;
-        OnGameOver += OnGameOverHandler;
-        OnGamePause += OnGamePauseHandler;
-        OnGameResume += OnGameResumeHandler;
 
         isInitialized = true;
     }
@@ -197,29 +191,10 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         CurrGameSpeedIdx = 0;
         CurrGameState = GameState.PLAYING;
     }
-
-    void OnGameOverHandler(GameManager gm) {
-        
-    }
-
-    void OnGamePauseHandler(GameManager gm) {
-        
-    }
-
-    void OnGameResumeHandler(GameManager gm) {
-        
-    }
     #endregion
     public void RestartGame() {
         CurrGameState = GameState.STOPPED;
         CurrGameState = GameState.STARTING; //trigger start
-    }
-
-    void SetGameSpeedTo(GameSpeed gameSpeed)  {
-        droneManager.SpawnAmount = gameSpeed.numDronesToSpawn;
-        droneManager.SpawnDelay = gameSpeed.droneSpawnFrequencySeconds;
-        gateManager.SpawnAmount = gameSpeed.numGatesToSpawn;
-        gateManager.SpawnDelay = gameSpeed.gateSpawnFrequencySeconds;
     }
 
     void OnScoreChange(ScoreManager sm) {

@@ -36,6 +36,7 @@ public class SpriteManager : MonoBehaviour, ILoadableScript, IDependentScript
         gameManager.OnGameStart += OnGameStart;
         gameManager.OnGameOver += OnGameOver;
         gameManager.OnNewPlayer += OnNewPlayer;
+        gameManager.OnNewGameSpeed += OnNewGameSpeed;
 
         objectPooler = ObjectPooler.Instance;
         sprites = new List<GameObject>();
@@ -79,6 +80,10 @@ public class SpriteManager : MonoBehaviour, ILoadableScript, IDependentScript
         this.player = player;
         Vector2 playerSizeVector = Util.GetSizeOfSprite(player.gameObject);
         playerSize = Mathf.Max(playerSizeVector.x, playerSizeVector.y);
+    }
+
+    protected virtual void OnNewGameSpeed(GameSpeed newGameSpeed) {
+        
     }
 
     public virtual void OnGameStart(GameManager gm) {

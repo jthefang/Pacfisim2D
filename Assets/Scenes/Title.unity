@@ -2816,6 +2816,13 @@ MonoBehaviour:
   gameDifficulties:
   - relativeGateEndSize: 1
   - relativeGateEndSize: 0.8
+  musicThemes:
+  - startSound: {fileID: 8300000, guid: e7728dcea3dfb43828c7e9600fc44b6f, type: 3}
+    mainTheme: {fileID: 8300000, guid: 7433dc3f9d1e146d094bbb238cb4f0a5, type: 3}
+    loseSound: {fileID: 8300000, guid: 4574879063e0d462bad41e7482e1909d, type: 3}
+  - startSound: {fileID: 0}
+    mainTheme: {fileID: 8300000, guid: 5a55ad0caf45c42c0906a935f1d800bb, type: 3}
+    loseSound: {fileID: 8300000, guid: 9b6e8d2ffbf2748c69fd006b2ec467aa, type: 3}
 --- !u!4 &968639402
 Transform:
   m_ObjectHideFlags: 0

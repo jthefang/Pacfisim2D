@@ -15,6 +15,11 @@ public class GateManager : PeriodicSpawningSpriteManager
         return "Gate";
     }
 
+    protected override void OnNewGameSpeed(GameSpeed newGameSpeed) {
+        this.SpawnAmount = newGameSpeed.numGatesToSpawn;
+        this.SpawnDelay = newGameSpeed.gateSpawnFrequencySeconds;
+    }
+
     public override Vector2 GetSpawnLocPadding() {
         GameObject gateObject = objectPooler.GetSpritePrefab(GetSpriteName());
         Vector3 ropeSize = Util.GetSizeOfSprite(gateObject.transform.Find("Rope").gameObject); 
@@ -41,7 +46,12 @@ public class GateManager : PeriodicSpawningSpriteManager
 
     public void SpawnGate() {
         if (ShouldSpawn) {
-            Vector2 randPos = new Vector2(Random.Range(minX, maxX), Random.Range(minY, maxY));
+            //random signs because I needed more randomness
+            float randX = Random.Range(minX, maxX); 
+            float randY = Random.Range(minY, maxY);
+            int randSign1 = Random.Range(0,2)*2 - 1;
+            int randSign2 = Random.Range(0,2)*2 - 1;
+            Vector2 randPos = new Vector2(randX * randSign1, randY + randSign2);
 
             while (Vector2.Distance(randPos, player.transform.position) < 5 * playerSize) { 
                 //make sure gate doesn't spawn close to player 

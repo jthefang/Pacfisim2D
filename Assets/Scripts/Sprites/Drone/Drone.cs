@@ -19,7 +19,7 @@ public class Drone : MonoBehaviour, IPooledObject
 
     Collider2D collider;
 
-    SpriteManager spriteManager;
+    DroneManager droneManager;
     GameManager gameManager;
     MultiplierManager multiplierManager;
     public event Action<Drone> OnDroneDeath;
@@ -55,7 +55,7 @@ public class Drone : MonoBehaviour, IPooledObject
     }
 
     public void OnObjectInitiate(SpriteManager sm) {
-        spriteManager = sm;
+        droneManager = (DroneManager) sm;
         this.transform.SetParent(sm.transform);
 
         bodyRenderer = BodyObject().GetComponent<SpriteRenderer>();
@@ -63,7 +63,8 @@ public class Drone : MonoBehaviour, IPooledObject
     }
 
     public void OnObjectSpawn()  {
-        this.targetTransform = spriteManager.player.gameObject.transform;
+        this.targetTransform = droneManager.player.gameObject.transform;
+        this.speed = droneManager.DroneSpeed;
         hasCooledDown = false;
         currCooldownTime = spawnCooldownTime;
         bodyRenderer.color = initialColor;
