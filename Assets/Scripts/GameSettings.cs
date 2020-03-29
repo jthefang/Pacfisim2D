@@ -13,6 +13,13 @@ public class GameDifficulty {
     public float relativeGateEndSize;
 }
 
+[Serializable]
+public class GameMusicTheme {
+    public AudioClip startSound;
+    public AudioClip mainTheme;
+    public AudioClip loseSound;
+}
+
 public class GameSettings : MonoBehaviour
 {
     #region Singleton
@@ -41,10 +48,20 @@ public class GameSettings : MonoBehaviour
         }
     }
 
+    GameMusicTheme _musicTheme;
+    public GameMusicTheme MusicTheme {
+        get {
+            return _musicTheme;
+        }
+    }
+    [SerializeField]
+    List<GameMusicTheme> musicThemes;
+
     // Start is called before the first frame update
     void Start()
     {
         CurrGameDifficulty = gameDifficulties[(int) GameDifficultyLevel.NORMAL];
+        SetMainMusicTheme(0);
     }
 
     // Update is called once per frame
@@ -56,6 +73,10 @@ public class GameSettings : MonoBehaviour
     public void SetGameDifficultyFromDropdownOptions(int difficultyLevel) {
         CurrGameDifficulty = gameDifficulties[difficultyLevel];
         currGameDifficultyLevel = (GameDifficultyLevel) difficultyLevel;
+    }
+
+    public void SetMainMusicTheme(int themeIdx) {
+        _musicTheme = musicThemes[themeIdx];
     }
 
 }

@@ -99,12 +99,6 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     GameSettings gameSettings;
     #endregion
 
-    [SerializeField]
-    private AudioClip gameStartSound;
-    [SerializeField]
-    private AudioClip gameOverSound;
-    private AudioSource audioSource;
-
     ScoreManager scoreManager;
     ObjectPooler objectPooler;
     [SerializeField]
@@ -155,8 +149,6 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         scoreManager.OnScoreChange += OnScoreChange;
 
         gameSettings = GameSettings.Instance;
-
-        audioSource = gameObject.GetComponent<AudioSource>();
         
         OnGameStateChange += OnGameStateChangeHandler;
         OnGameStart += OnGameStartHandler;
@@ -185,6 +177,7 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
         CurrGameState = GameState.STARTING;
     }
 
+    #region GameStateEventHandlers
     void OnGameStateChangeHandler(GameState prevGameState, GameState newGameState) {
         if (newGameState == GameState.STARTING) {
             OnGameStart?.Invoke(this);
@@ -202,22 +195,24 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
     void OnGameStartHandler(GameManager gm) {
         resetPlayer();
         CurrGameSpeedIdx = 0;
-        audioSource.PlayOneShot(gameStartSound);
-        Invoke("playMainTheme", 0.5f);
         CurrGameState = GameState.PLAYING;
     }
 
     void OnGameOverHandler(GameManager gm) {
-        audioSource.Stop();
-        audioSource.PlayOneShot(gameOverSound);
+        
     }
 
     void OnGamePauseHandler(GameManager gm) {
-        audioSource.Pause();
+        
     }
 
     void OnGameResumeHandler(GameManager gm) {
-        audioSource.Play();
+        
+    }
+    #endregion
+    public void RestartGame() {
+        CurrGameState = GameState.STOPPED;
+        CurrGameState = GameState.STARTING; //trigger start
     }
 
     void SetGameSpeedTo(GameSpeed gameSpeed)  {
@@ -235,16 +230,6 @@ public class GameManager : MonoBehaviour, ILoadableScript, IDependentScript
                 CurrGameSpeedIdx = nextSpeedIdx;
             }
         }
-    }
-
-    public void RestartGame() {
-        CurrGameState = GameState.STOPPED;
-        CurrGameState = GameState.STARTING; //trigger start
-    }
-
-    private void playMainTheme() {
-        if (IsPlaying)
-            audioSource.Play();
     }
 
     private void spawnPlayer() {
