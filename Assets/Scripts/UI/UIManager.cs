@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement; //allows you to load other scenes
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour, ILoadableScript, IDependentScript
@@ -87,6 +88,10 @@ public class UIManager : MonoBehaviour, ILoadableScript, IDependentScript
 
     void ShowGameOverPanel() {
         ToggleGameOverPanel(true);
+    }
+
+    public void GoToTitleScene() {
+        SceneManager.LoadScene(Constants.TITLE_SCENE);
     }
 
     public void ToggleGameOverPanel(bool shouldShow) {
